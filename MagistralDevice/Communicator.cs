@@ -16,6 +16,34 @@ namespace MagistralDevice
 
     #endregion
 
+    #region Constructors
+
+    public Communicator(string serviceName) {
+      _listener = new BluetoothListener(Marshal.GetTypeLibGuidForAssembly(Assembly.GetExecutingAssembly()))
+                  {
+                      ServiceName = serviceName
+                  };
+      StopRequired = false;
+    }
+
+    #endregion
+
+    #region Properties
+
+    public bool StopRequired { private get; set; }
+
+    #endregion
+
+    #region Implementation of IDisposable
+
+    /// <inheritdoc />
+    /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+    public void Dispose() {
+      _listener?.Stop();
+    }
+
+    #endregion
+
     #region Private methods
 
     [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
@@ -39,44 +67,14 @@ namespace MagistralDevice
             StreamReader reader = new StreamReader(stream);
             while( true ) {
               builder.Append(reader.ReadToEnd());
-              
             }
           }
         }
         catch( Exception e ) {
           return;
         }
-        
       }
     }
-
-    #endregion
-    
-    #region Constructors
-
-    public Communicator(string serviceName) {
-      _listener = new BluetoothListener(Marshal.GetTypeLibGuidForAssembly(Assembly.GetExecutingAssembly()))
-      {
-        ServiceName = serviceName
-      };
-      StopRequired = false;
-    }
-    
-    #endregion
-    
-    #region Implementation of IDisposable
-
-    /// <inheritdoc />
-    /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-    public void Dispose() {
-      _listener?.Stop();
-    }
-
-    #endregion
-    
-    #region Properties
-    
-    public bool StopRequired { private get; set; }
 
     #endregion
   }

@@ -15,15 +15,19 @@ namespace MagistralDevice
     private static void Main() {
       // ReSharper disable once ObjectCreationAsStatement
       Mutex isSingleInstance = new Mutex(true, Assembly.GetExecutingAssembly().GetType().GUID.ToString(), out bool owned);
-      if( owned ) {
-        Application.EnableVisualStyles();
-        Application.SetCompatibleTextRenderingDefault(false);
-        Application.Run(new DeviceMain());
+      try {
+        if( owned ) {
+          Application.EnableVisualStyles();
+          Application.SetCompatibleTextRenderingDefault(false);
+          Application.Run(new DeviceMain());
+        }
+        else {
+          MessageBox.Show(@"Приложение уже запущено", Resources.Magistral_Device_Title, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        }
       }
-      else {
-        MessageBox.Show(@"Приложение уже запущено", Resources.Magistral_Device_Title, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      finally {
+        isSingleInstance.ReleaseMutex();
       }
-      isSingleInstance.ReleaseMutex();
     }
   }
 }
