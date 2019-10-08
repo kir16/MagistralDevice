@@ -188,5 +188,19 @@ namespace MagistralDevice
     //****************************************************************************************************
 
     #endregion
+
+    private void tsbAdd_EnabledChanged(object sender, EventArgs e) {
+      ToolStripButton button = (ToolStripButton)sender;
+      if( button != null ) {
+        button.Image = button.Enabled ? Resources.Add : Resources.Add_Dis;
+      }
+    }
+
+    private void tsbDel_EnabledChanged(object sender, EventArgs e) {
+      ToolStripButton button = (ToolStripButton)sender;
+      if( button != null ) {
+        button.Image = button.Enabled ? Resources.Del : Resources.Del_Dis;
+      }
+    }
   }
 }

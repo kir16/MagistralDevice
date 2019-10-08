@@ -112,6 +112,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Reaktor.ico" />
+    <None Include="Resources\Del.png" />
+    <None Include="Resources\Del Dis.png" />
+    <None Include="Resources\Add.png" />
+    <None Include="Resources\Add Dis.png" />
     <None Include="Resources\Symbol Delete.png" />
     <None Include="Resources\Symbol Delete Disabled.png" />
     <None Include="Resources\Symbol Add.png" />

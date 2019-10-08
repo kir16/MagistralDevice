@@ -61,6 +61,26 @@ namespace MagistralDevice.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Add {
+            get {
+                object obj = ResourceManager.GetObject("Add", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Add_Dis {
+            get {
+                object obj = ResourceManager.GetObject("Add_Dis", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Запустить.
         /// </summary>
         internal static string btStartStop_TextWhenIdle {
@@ -75,6 +95,26 @@ namespace MagistralDevice.Properties {
         internal static string btStartStop_TextWhenWork {
             get {
                 return ResourceManager.GetString("btStartStop_TextWhenWork", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Del {
+            get {
+                object obj = ResourceManager.GetObject("Del", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Del_Dis {
+            get {
+                object obj = ResourceManager.GetObject("Del_Dis", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
