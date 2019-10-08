@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -59,20 +57,18 @@ namespace MagistralDevice
       }
     }
 
-    [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
-    //****************************************************************************************************
     private void UpdateData() {
       if( _data == null ) {
         return;
       }
 
+      // ReSharper disable PossibleNullReferenceException
       _data.Attributes.Name = tbName?.Text;
       _data.Attributes.Serial = tbSerial?.Text;
       _data.Attributes.Version = tbVersion?.Text;
+      // ReSharper restore PossibleNullReferenceException
     }
-    //****************************************************************************************************
 
-    //****************************************************************************************************
     private void EnableControls(bool enabled) {
       // ReSharper disable once PossibleNullReferenceException
       foreach( object theControl in _interactionControls ) {
@@ -89,9 +85,7 @@ namespace MagistralDevice
         }
       }
     }
-    //****************************************************************************************************
 
-    //****************************************************************************************************
     private bool StartListening() {
       BluetoothRadio mainRadio = BluetoothRadio.PrimaryRadio;
       if( mainRadio == null ) {
@@ -106,27 +100,21 @@ namespace MagistralDevice
 
       return true;
     }
-    //****************************************************************************************************
-
-    //****************************************************************************************************
+    
     private void StopListening() {
       _radioListener = null;
     }
-    //****************************************************************************************************
 
     #endregion
 
     #region Event handlers
 
-    //****************************************************************************************************
     private void DeviceMain_Load(object sender, EventArgs e) {
       Icon = Resources.Reaktor;
       _data = dxDeviceData.Deserialize(Settings.Default?.DeviceData);
       UpdateControls();
     }
-    //****************************************************************************************************
 
-    //****************************************************************************************************
     private void DeviceMain_FormClosing(object sender, FormClosingEventArgs e) {
       if( Settings.Default == null || _data == null ) {
         return;
@@ -137,31 +125,7 @@ namespace MagistralDevice
       Settings.Default.DeviceData = _data?.Serialize();
       Settings.Default.Save();
     }
-    //****************************************************************************************************
 
-    //****************************************************************************************************
-    private void tstbDeleteParameter_EnabledChanged(object sender, EventArgs e) {
-      if( tstbDeleteParameter != null && tstbDeleteParameter.Enabled ) {
-        tstbDeleteParameter.Image = Resources.Symbol_Delete;
-      }
-      else if( tstbDeleteParameter != null ) {
-        tstbDeleteParameter.Image = Resources.Symbol_Delete_Disabled;
-      }
-    }
-    //****************************************************************************************************
-
-    //****************************************************************************************************
-    private void tstbAddParameter_EnabledChanged(object sender, EventArgs e) {
-      if( tstbAddParameter != null && tstbAddParameter.Enabled ) {
-        tstbAddParameter.Image = Resources.Symbol_Add;
-      }
-      else if( tstbAddParameter != null ) {
-        tstbAddParameter.Image = Resources.Symbol_Add_Disabled;
-      }
-    }
-    //****************************************************************************************************
-
-    //****************************************************************************************************
     private void btStartStop_Click(object sender, EventArgs e) {
       if( _radioListener == null ) {
         if( !StartListening() ) {
@@ -185,9 +149,6 @@ namespace MagistralDevice
         EnableControls(true);
       }
     }
-    //****************************************************************************************************
-
-    #endregion
 
     private void tsbAdd_EnabledChanged(object sender, EventArgs e) {
       ToolStripButton button = (ToolStripButton)sender;
@@ -202,5 +163,7 @@ namespace MagistralDevice
         button.Image = button.Enabled ? Resources.Del : Resources.Del_Dis;
       }
     }
+
+    #endregion
   }
 }

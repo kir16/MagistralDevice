@@ -55,7 +55,6 @@
     <Compile Include="Communicator.cs" />
     <Compile Include="DataClasses\AccessLevel.cs" />
     <Compile Include="DataClasses\CommandNames.cs" />
-    <Compile Include="DataClasses\DataFormat.Designer.cs" />
     <Compile Include="DataClasses\dxCommand.cs" />
     <Compile Include="DataClasses\dxDeviceAttributes.cs" />
     <Compile Include="DataClasses\dxDeviceData.cs" />
@@ -93,7 +92,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="DataClasses\DataFormat.xsd">
+    <None Include="DataClasses\DeviceDataFormat.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
@@ -116,10 +115,6 @@
     <None Include="Resources\Del Dis.png" />
     <None Include="Resources\Add.png" />
     <None Include="Resources\Add Dis.png" />
-    <None Include="Resources\Symbol Delete.png" />
-    <None Include="Resources\Symbol Delete Disabled.png" />
-    <None Include="Resources\Symbol Add.png" />
-    <None Include="Resources\Symbol Add Disabled.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

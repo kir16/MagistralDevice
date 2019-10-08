@@ -6,6 +6,7 @@
 // ReSharper disable PossibleNullReferenceException
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Xml;
@@ -25,34 +26,125 @@ namespace MagistralDevice.DataClasses
     /// <summary>
     ///   DeviceData class constructor
     /// </summary>
-    // ReSharper disable InconsistentNaming
     public dxDeviceData() {
-      Parameters = new dxParameterList();
-      Attributes = new dxDeviceAttributes();
+      _userIntParameters = new dxParameterList();
+      _userBoolParameters = new dxParameterList();
+      _systemIntParameters = new dxParameterList();
+      _systemBoolParameters = new dxParameterList();
+      _attributes = new dxDeviceAttributes();
     }
 
     public dxDeviceAttributes Attributes
     {
-      get;
-      set;
+      get
+      {
+        return _attributes;
+      }
+      set
+      {
+        if( _attributes == value ) {
+          return;
+        }
+
+        if( _attributes != null && _attributes.Equals(value) ) {
+          return;
+        }
+
+        _attributes = value;
+        OnPropertyChanged("Attributes");
+      }
     }
 
-    public dxParameterList Parameters
+    public dxParameterList SystemBoolParameters
     {
-      get;
-      set;
+      get
+      {
+        return _systemBoolParameters;
+      }
+      set
+      {
+        if( _systemBoolParameters == value ) {
+          return;
+        }
+
+        if( _systemBoolParameters == null
+            || _systemBoolParameters.Equals(value) != true ) {
+          _systemBoolParameters = value;
+          OnPropertyChanged("SystemBoolParameters");
+        }
+      }
+    }
+
+    public dxParameterList SystemIntParameters
+    {
+      get
+      {
+        return _systemIntParameters;
+      }
+      set
+      {
+        if( _systemIntParameters == value ) {
+          return;
+        }
+
+        if( _systemIntParameters == null
+            || _systemIntParameters.Equals(value) != true ) {
+          _systemIntParameters = value;
+          OnPropertyChanged("SystemIntParameters");
+        }
+      }
+    }
+
+    public dxParameterList UserBoolParameters
+    {
+      get
+      {
+        return _userBoolParameters;
+      }
+      set
+      {
+        if( _userBoolParameters == value ) {
+          return;
+        }
+
+        if( _userBoolParameters == null
+            || _userBoolParameters.Equals(value) != true ) {
+          _userBoolParameters = value;
+          OnPropertyChanged("UserBoolParameters");
+        }
+      }
+    }
+
+    public dxParameterList UserIntParameters
+    {
+      get
+      {
+        return _userIntParameters;
+      }
+      set
+      {
+        if( _userIntParameters == value ) {
+          return;
+        }
+
+        if( _userIntParameters == null
+            || _userIntParameters.Equals(value) != true ) {
+          _userIntParameters = value;
+          OnPropertyChanged("UserIntParameters");
+        }
+      }
     }
 
     private static XmlSerializer Serializer
     {
       get
       {
-        if( serializer == null ) {
-          serializer = new XmlSerializerFactory().CreateSerializer(typeof(dxDeviceData));
-          serializer.UnknownNode += delegate(object sender, XmlNodeEventArgs e) {
+        if( _serializer == null ) {
+          _serializer = new XmlSerializerFactory().CreateSerializer(typeof(dxDeviceData));
+          _serializer.UnknownNode += delegate(object sender, XmlNodeEventArgs e) {
                                       Debug.WriteLine("[Unknown Node] Ln {0} Col {1} Object: {2} LocalName {3}, NodeName: {4}", e.LineNumber, e.LinePosition, e.ObjectBeingDeserialized.GetType().FullName, e.LocalName, e.Name);
                                     };
-          serializer.UnknownElement += delegate(object sender, XmlElementEventArgs e) {
+          _serializer.UnknownElement += delegate(object sender, XmlElementEventArgs e) {
                                          Debug.WriteLine("[Unknown Element  ] Ln {0} Col {1} Object : {2} ExpectedElements {3}, Element : {4}",
                                                          e.LineNumber,
                                                          e.LinePosition,
@@ -60,7 +152,7 @@ namespace MagistralDevice.DataClasses
                                                          e.ExpectedElements,
                                                          e.Element.InnerXml);
                                        };
-          serializer.UnknownAttribute += delegate(object sender, XmlAttributeEventArgs e) {
+          _serializer.UnknownAttribute += delegate(object sender, XmlAttributeEventArgs e) {
                                            Debug.WriteLine("[Unknown Attribute] Ln {0} Col {1} Object : {2} LocalName {3}, Text : {4}",
                                                            e.LineNumber,
                                                            e.LinePosition,
@@ -70,8 +162,16 @@ namespace MagistralDevice.DataClasses
                                          };
         }
 
-        return serializer;
+        return _serializer;
       }
+    }
+
+    // ReSharper disable once EventNeverSubscribedTo.Global
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public void OnPropertyChanged(string propertyName) {
+      PropertyChangedEventHandler handler = PropertyChanged;
+      handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     /// <summary>
@@ -166,7 +266,12 @@ namespace MagistralDevice.DataClasses
 
     #region Private fields
 
-    private static XmlSerializer serializer;
+    private dxDeviceAttributes _attributes;
+    private dxParameterList _systemBoolParameters;
+    private dxParameterList _systemIntParameters;
+    private dxParameterList _userBoolParameters;
+    private dxParameterList _userIntParameters;
+    private static XmlSerializer _serializer;
 
     #endregion
 
@@ -194,6 +299,7 @@ namespace MagistralDevice.DataClasses
       }
       finally {
         streamReader?.Dispose();
+
         memoryStream?.Dispose();
       }
     }
@@ -223,7 +329,6 @@ namespace MagistralDevice.DataClasses
       if( exception != null ) {
         throw exception;
       }
-
       return result;
     }
 
