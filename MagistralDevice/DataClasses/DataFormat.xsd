@@ -1,33 +1,33 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mdx="magistralDataExchange"
-           xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="magistralDataExchange"
-           elementFormDefault="qualified" vc:minVersion="1.1">
+  xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="magistralDataExchange"
+  elementFormDefault="qualified" vc:minVersion="1.1">
 
   <xs:simpleType name="AccessLevel">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="SYS" />
-      <xs:enumeration value="USR" />
+      <xs:enumeration value="SYS"/>
+      <xs:enumeration value="USR"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="CommandNames">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="get_attributes" />
+      <xs:enumeration value="get_attributes"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="Command">
     <xs:all>
-      <xs:element name="Name" type="mdx:CommandNames" />
-      <xs:element name="Parameters" nillable="true" type="mdx:ParameterList" />
+      <xs:element name="Name" type="mdx:CommandNames"/>
+      <xs:element name="Parameters" nillable="true" type="mdx:ParameterList"/>
     </xs:all>
   </xs:complexType>
   <xs:complexType name="Message">
     <xs:all>
-      <xs:element name="Code" type="xs:int" />
+      <xs:element name="Code" type="xs:int"/>
       <xs:element name="Text">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:maxLength value="100" />
+            <xs:maxLength value="100"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
@@ -35,27 +35,35 @@
   </xs:complexType>
   <xs:complexType name="MessageList">
     <xs:sequence maxOccurs="unbounded" minOccurs="1">
-      <xs:element name="MessageItem" type="mdx:Message" />
+      <xs:element name="MessageItem" type="mdx:Message"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="Parameter">
     <xs:all>
-      <xs:element name="Access" type="mdx:AccessLevel" />
-      <xs:element name="BoolValue" nillable="true" type="xs:boolean" />
-      <xs:element name="IntValue" nillable="true" type="xs:int" />
-      <xs:element name="StringValue" nillable="true">
+      <xs:element name="Name">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:whiteSpace value="preserve" />
+            <xs:minLength value="1"/>
+            <xs:maxLength value="64"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
-      <xs:element name="MinInt" nillable="true" type="xs:int" />
-      <xs:element name="MaxInt" nillable="true" type="xs:int" />
+      <xs:element name="Access" type="mdx:AccessLevel"/>
+      <xs:element name="BoolValue" nillable="true" type="xs:boolean"/>
+      <xs:element name="IntValue" nillable="true" type="xs:int"/>
+      <xs:element name="StringValue" nillable="true">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:whiteSpace value="preserve"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="MinInt" nillable="true" type="xs:int"/>
+      <xs:element name="MaxInt" nillable="true" type="xs:int"/>
       <xs:element name="StringLength" nillable="true">
         <xs:simpleType>
           <xs:restriction base="xs:int">
-            <xs:minInclusive value="1" />
+            <xs:minInclusive value="1"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
@@ -63,7 +71,7 @@
   </xs:complexType>
   <xs:complexType name="ParameterList">
     <xs:sequence maxOccurs="unbounded" minOccurs="1">
-      <xs:element name="ParameterItem" type="mdx:Parameter" />
+      <xs:element name="ParameterItem" type="mdx:Parameter"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="DeviceAttributes">
@@ -71,21 +79,21 @@
       <xs:element name="Serial">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:maxLength value="25" />
+            <xs:maxLength value="25"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
       <xs:element name="Name">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:maxLength value="75" />
+            <xs:maxLength value="75"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
       <xs:element name="Version">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:maxLength value="10" />
+            <xs:maxLength value="10"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
@@ -93,8 +101,8 @@
   </xs:complexType>
   <xs:complexType name="DeviceData">
     <xs:all>
-      <xs:element name="Attributes" type="mdx:DeviceAttributes" />
-      <xs:element name="Parameters" type="mdx:ParameterList" />
+      <xs:element name="Attributes" type="mdx:DeviceAttributes"/>
+      <xs:element name="Parameters" type="mdx:ParameterList"/>
     </xs:all>
   </xs:complexType>
 </xs:schema>

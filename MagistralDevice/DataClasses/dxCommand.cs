@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
@@ -20,6 +21,12 @@ namespace MagistralDevice.DataClasses
   // ReSharper disable once InconsistentNaming
   public sealed class dxCommand
   {
+    #region Private fields
+
+    private static XmlSerializer _serializer;
+
+    #endregion
+
     /// <summary>
     ///   Command class constructor
     /// </summary>
@@ -54,24 +61,24 @@ namespace MagistralDevice.DataClasses
 
         // ReSharper disable PossibleNullReferenceException
         _serializer.UnknownNode += delegate(object sender, XmlNodeEventArgs e) {
-                                    Debug.WriteLine("[Unknown Node] Ln {0} Col {1} Object: {2} LocalName {3}, NodeName: {4}", e.LineNumber, e.LinePosition, e.ObjectBeingDeserialized.GetType().FullName, e.LocalName, e.Name);
-                                  };
+                                     Debug.WriteLine("[Unknown Node] Ln {0} Col {1} Object: {2} LocalName {3}, NodeName: {4}", e.LineNumber, e.LinePosition, e.ObjectBeingDeserialized.GetType().FullName, e.LocalName, e.Name);
+                                   };
         _serializer.UnknownElement += delegate(object sender, XmlElementEventArgs e) {
-                                       Debug.WriteLine("[Unknown Element  ] Ln {0} Col {1} Object : {2} ExpectedElements {3}, Element : {4}",
-                                                       e.LineNumber,
-                                                       e.LinePosition,
-                                                       e.ObjectBeingDeserialized.GetType().FullName,
-                                                       e.ExpectedElements,
-                                                       e.Element.InnerXml);
-                                     };
+                                        Debug.WriteLine("[Unknown Element  ] Ln {0} Col {1} Object : {2} ExpectedElements {3}, Element : {4}",
+                                                        e.LineNumber,
+                                                        e.LinePosition,
+                                                        e.ObjectBeingDeserialized.GetType().FullName,
+                                                        e.ExpectedElements,
+                                                        e.Element.InnerXml);
+                                      };
         _serializer.UnknownAttribute += delegate(object sender, XmlAttributeEventArgs e) {
-                                         Debug.WriteLine("[Unknown Attribute] Ln {0} Col {1} Object : {2} LocalName {3}, Text : {4}",
-                                                         e.LineNumber,
-                                                         e.LinePosition,
-                                                         e.ObjectBeingDeserialized.GetType().FullName,
-                                                         e.ExpectedAttributes,
-                                                         e.Attr.Name);
-                                       };
+                                          Debug.WriteLine("[Unknown Attribute] Ln {0} Col {1} Object : {2} LocalName {3}, Text : {4}",
+                                                          e.LineNumber,
+                                                          e.LinePosition,
+                                                          e.ObjectBeingDeserialized.GetType().FullName,
+                                                          e.ExpectedAttributes,
+                                                          e.Attr.Name);
+                                        };
 
         return _serializer;
         // ReSharper restore PossibleNullReferenceException
@@ -135,6 +142,7 @@ namespace MagistralDevice.DataClasses
       if( exception != null ) {
         throw exception;
       }
+
       return result;
     }
 
@@ -164,12 +172,6 @@ namespace MagistralDevice.DataClasses
     public dxCommand Clone() {
       return(dxCommand)MemberwiseClone();
     }
-
-    #endregion
-
-    #region Private fields
-
-    private static XmlSerializer _serializer;
 
     #endregion
 
@@ -228,6 +230,7 @@ namespace MagistralDevice.DataClasses
       if( exception != null ) {
         throw exception;
       }
+
       return result;
     }
 

@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
@@ -21,6 +22,12 @@ namespace MagistralDevice.DataClasses
   // ReSharper disable once InconsistentNaming
   public sealed class dxMessageList
   {
+    #region Private fields
+
+    private static XmlSerializer _serializer;
+
+    #endregion
+
     /// <summary>
     ///   MessageList class constructor
     /// </summary>
@@ -130,6 +137,7 @@ namespace MagistralDevice.DataClasses
       if( exception != null ) {
         throw exception;
       }
+
       return result;
     }
 
@@ -159,12 +167,6 @@ namespace MagistralDevice.DataClasses
     public dxMessageList Clone() {
       return(dxMessageList)MemberwiseClone();
     }
-
-    #endregion
-
-    #region Private fields
-
-    private static XmlSerializer _serializer;
 
     #endregion
 
@@ -222,6 +224,7 @@ namespace MagistralDevice.DataClasses
       if( exception != null ) {
         throw exception;
       }
+
       return result;
     }
 
@@ -232,6 +235,7 @@ namespace MagistralDevice.DataClasses
         if( Serializer != null ) {
           return(dxMessageList)Serializer.Deserialize(XmlReader.Create(stringReader));
         }
+
         return new dxMessageList();
       }
       finally {
@@ -243,6 +247,7 @@ namespace MagistralDevice.DataClasses
       if( Serializer != null ) {
         return(dxMessageList)Serializer.Deserialize(s ?? throw new ArgumentNullException(nameof(s)));
       }
+
       return new dxMessageList();
     }
 

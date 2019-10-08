@@ -61,7 +61,25 @@ namespace MagistralDevice.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Magistral Device.
+        ///   Looks up a localized string similar to Запустить.
+        /// </summary>
+        internal static string btStartStop_TextWhenIdle {
+            get {
+                return ResourceManager.GetString("btStartStop_TextWhenIdle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Остановить.
+        /// </summary>
+        internal static string btStartStop_TextWhenWork {
+            get {
+                return ResourceManager.GetString("btStartStop_TextWhenWork", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Эмулятор &quot;Магистраль&quot;.
         /// </summary>
         internal static string Magistral_Device_Title {
             get {
@@ -70,42 +88,12 @@ namespace MagistralDevice.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Bitmap Symbol_Add {
+        internal static System.Drawing.Icon Reaktor {
             get {
-                object obj = ResourceManager.GetObject("Symbol_Add", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Symbol_Add_Disabled {
-            get {
-                object obj = ResourceManager.GetObject("Symbol_Add_Disabled", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Symbol_Delete {
-            get {
-                object obj = ResourceManager.GetObject("Symbol_Delete", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Symbol_Delete_Disabled {
-            get {
-                object obj = ResourceManager.GetObject("Symbol_Delete_Disabled", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                object obj = ResourceManager.GetObject("Reaktor", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
     }

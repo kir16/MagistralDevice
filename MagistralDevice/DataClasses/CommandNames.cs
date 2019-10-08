@@ -5,6 +5,7 @@
 // ------------------------------------------------------------------------------
 
 // ReSharper disable UnusedMember.Global
+
 #pragma warning disable
 namespace MagistralDevice.DataClasses
 {

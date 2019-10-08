@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
+using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Serialization;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
 using MagistralDevice.DataClasses;
@@ -16,18 +13,6 @@ namespace MagistralDevice
 {
   public partial class DeviceMain : Form
   {
-    #region Private fields
-
-    private DeviceData _data;
-
-#pragma warning disable 649
-    private BluetoothListener _radioListener;
-#pragma warning restore 649
-
-    private readonly object[] _interactionControls;
-
-    #endregion
-
     #region Constructors
 
     public DeviceMain() {
@@ -38,10 +23,19 @@ namespace MagistralDevice
                                  tbName,
                                  tbSerial,
                                  tbVersion,
-                                 tstbAddParameter,
-                                 tstbDeleteParameter
+                                 tcParameters
                              };
     }
+
+    #endregion
+
+    #region Private fields
+
+    private dxDeviceData _data;
+
+    private BluetoothListener _radioListener;
+
+    private readonly object[] _interactionControls;
 
     #endregion
 
@@ -66,6 +60,7 @@ namespace MagistralDevice
     }
 
     [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
+    //****************************************************************************************************
     private void UpdateData() {
       if( _data == null ) {
         return;
@@ -74,43 +69,6 @@ namespace MagistralDevice
       _data.Attributes.Name = tbName?.Text;
       _data.Attributes.Serial = tbSerial?.Text;
       _data.Attributes.Version = tbVersion?.Text;
-    }
-
-    //****************************************************************************************************
-    private static string SerializeObject(object someObject, Type objectType) {
-      if( someObject == null || objectType == null ) {
-        return"";
-      }
-
-      StringBuilder builder = new StringBuilder();
-      using( TextWriter writer = new StringWriter(builder) ) {
-        using( XmlWriter xmlWriter = XmlWriter.Create(writer) ) {
-          XmlSerializer serializer = new XmlSerializer(objectType);
-          // ReSharper disable once AssignNullToNotNullAttribute
-          serializer.Serialize(xmlWriter, someObject);
-        }
-      }
-
-      return builder.ToString();
-    }
-    //****************************************************************************************************
-
-    //****************************************************************************************************
-    private static object DeserializeObject(string xml, Type resulType) {
-      object result;
-
-      if( string.IsNullOrEmpty(xml) || resulType == null ) {
-        return null;
-      }
-
-      using( TextReader reader = new StringReader(xml) ) {
-        using( XmlReader xmlReader = XmlReader.Create(reader) ) {
-          XmlSerializer serializer = new XmlSerializer(resulType);
-          result = serializer.Deserialize(xmlReader);
-        }
-      }
-
-      return result;
     }
     //****************************************************************************************************
 
@@ -125,6 +83,9 @@ namespace MagistralDevice
           case ToolStripButton _:
             ((ToolStripButton)theControl).Enabled = enabled;
             break;
+          case TabControl _:
+            ((TabControl)theControl).Enabled = enabled;
+            break;
         }
       }
     }
@@ -132,10 +93,6 @@ namespace MagistralDevice
 
     //****************************************************************************************************
     private bool StartListening() {
-      if( !BluetoothRadio.IsSupported ) {
-        return false;
-      }
-
       BluetoothRadio mainRadio = BluetoothRadio.PrimaryRadio;
       if( mainRadio == null ) {
         return false;
@@ -153,6 +110,7 @@ namespace MagistralDevice
 
     //****************************************************************************************************
     private void StopListening() {
+      _radioListener = null;
     }
     //****************************************************************************************************
 
@@ -162,7 +120,8 @@ namespace MagistralDevice
 
     //****************************************************************************************************
     private void DeviceMain_Load(object sender, EventArgs e) {
-      _data = (DeviceData)DeserializeObject(Settings.Default?.DeviceData, typeof(DeviceData)) ?? new DeviceData();
+      Icon = Resources.Reaktor;
+      _data = dxDeviceData.Deserialize(Settings.Default?.DeviceData);
       UpdateControls();
     }
     //****************************************************************************************************
@@ -175,20 +134,8 @@ namespace MagistralDevice
 
       UpdateData();
 
-      Settings.Default.DeviceData = SerializeObject(_data, typeof(DeviceData));
+      Settings.Default.DeviceData = _data?.Serialize();
       Settings.Default.Save();
-    }
-    //****************************************************************************************************
-
-    //****************************************************************************************************
-    private void DeviceMain_Shown(object sender, EventArgs e) {
-      if( BluetoothRadio.IsSupported ) {
-        return;
-      }
-
-      if( MessageBox.Show(Resources.Init_DeviceNotSupported_Text, Resources.Init_DeviceNotSupported_Caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.Cancel ) {
-        Close();
-      }
     }
     //****************************************************************************************************
 

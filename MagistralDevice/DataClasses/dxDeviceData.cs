@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global

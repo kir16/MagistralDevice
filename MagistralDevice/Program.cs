@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using InTheHand.Net.Bluetooth;
 using MagistralDevice.Properties;
 
 namespace MagistralDevice
@@ -13,10 +15,16 @@ namespace MagistralDevice
     /// </summary>
     [STAThread]
     private static void Main() {
-      // ReSharper disable once ObjectCreationAsStatement
-      Mutex isSingleInstance = new Mutex(true, Assembly.GetExecutingAssembly().GetType().GUID.ToString(), out bool owned);
+      // Ensure single app instance
+      Mutex isSingleInstance = new Mutex(true, Marshal.GetTypeLibGuidForAssembly(Assembly.GetExecutingAssembly()).ToString(), out bool owned);
       try {
         if( owned ) {
+          // Check if Bluetooth available
+          if( !BluetoothRadio.IsSupported ) {
+            MessageBox.Show(@"Не найдено доступное устройство Bluetooth", Resources.Magistral_Device_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+          }
+
           Application.EnableVisualStyles();
           Application.SetCompatibleTextRenderingDefault(false);
           Application.Run(new DeviceMain());

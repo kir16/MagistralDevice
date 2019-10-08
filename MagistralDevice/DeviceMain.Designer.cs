@@ -28,7 +28,6 @@
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DeviceMain));
       this.lbName = new System.Windows.Forms.Label();
       this.tbName = new System.Windows.Forms.TextBox();
       this.lbSerial = new System.Windows.Forms.Label();
@@ -38,14 +37,18 @@
       this.gbAttributes = new System.Windows.Forms.GroupBox();
       this.btStartStop = new System.Windows.Forms.Button();
       this.gbParameters = new System.Windows.Forms.GroupBox();
-      this.tstrParametersButtons = new System.Windows.Forms.ToolStrip();
-      this.tstbAddParameter = new System.Windows.Forms.ToolStripButton();
-      this.tstbDeleteParameter = new System.Windows.Forms.ToolStripButton();
+      this.tcParameters = new System.Windows.Forms.TabControl();
+      this.tpSysParams = new System.Windows.Forms.TabPage();
+      this.tlpSysParams = new System.Windows.Forms.TableLayoutPanel();
+      this.tpUserParams = new System.Windows.Forms.TabPage();
+      this.tlpUserParams = new System.Windows.Forms.TableLayoutPanel();
       this.statusDeviceState = new System.Windows.Forms.StatusStrip();
       this.tsslDeviceState = new System.Windows.Forms.ToolStripStatusLabel();
       this.gbAttributes.SuspendLayout();
       this.gbParameters.SuspendLayout();
-      this.tstrParametersButtons.SuspendLayout();
+      this.tcParameters.SuspendLayout();
+      this.tpSysParams.SuspendLayout();
+      this.tpUserParams.SuspendLayout();
       this.statusDeviceState.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -127,7 +130,7 @@
       this.gbParameters.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.gbParameters.Controls.Add(this.tstrParametersButtons);
+      this.gbParameters.Controls.Add(this.tcParameters);
       this.gbParameters.Location = new System.Drawing.Point(8, 62);
       this.gbParameters.Name = "gbParameters";
       this.gbParameters.Size = new System.Drawing.Size(735, 363);
@@ -135,36 +138,67 @@
       this.gbParameters.TabStop = false;
       this.gbParameters.Text = "Параметры устройства";
       // 
-      // tstrParametersButtons
+      // tcParameters
       // 
-      this.tstrParametersButtons.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tstbAddParameter,
-            this.tstbDeleteParameter});
-      this.tstrParametersButtons.Location = new System.Drawing.Point(3, 16);
-      this.tstrParametersButtons.Name = "tstrParametersButtons";
-      this.tstrParametersButtons.Size = new System.Drawing.Size(729, 25);
-      this.tstrParametersButtons.TabIndex = 0;
-      this.tstrParametersButtons.Text = "Управление списокм параметров";
+      this.tcParameters.Controls.Add(this.tpSysParams);
+      this.tcParameters.Controls.Add(this.tpUserParams);
+      this.tcParameters.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.tcParameters.Location = new System.Drawing.Point(3, 16);
+      this.tcParameters.Name = "tcParameters";
+      this.tcParameters.SelectedIndex = 0;
+      this.tcParameters.Size = new System.Drawing.Size(729, 344);
+      this.tcParameters.TabIndex = 1;
       // 
-      // tstbAddParameter
+      // tpSysParams
       // 
-      this.tstbAddParameter.Image = global::MagistralDevice.Properties.Resources.Symbol_Add;
-      this.tstbAddParameter.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this.tstbAddParameter.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.tstbAddParameter.Name = "tstbAddParameter";
-      this.tstbAddParameter.Size = new System.Drawing.Size(79, 22);
-      this.tstbAddParameter.Text = "Добавить";
-      this.tstbAddParameter.EnabledChanged += new System.EventHandler(this.tstbAddParameter_EnabledChanged);
+      this.tpSysParams.BackColor = System.Drawing.SystemColors.Control;
+      this.tpSysParams.Controls.Add(this.tlpSysParams);
+      this.tpSysParams.Location = new System.Drawing.Point(4, 22);
+      this.tpSysParams.Name = "tpSysParams";
+      this.tpSysParams.Padding = new System.Windows.Forms.Padding(3);
+      this.tpSysParams.Size = new System.Drawing.Size(721, 318);
+      this.tpSysParams.TabIndex = 0;
+      this.tpSysParams.Text = "Системные";
       // 
-      // tstbDeleteParameter
+      // tlpSysParams
       // 
-      this.tstbDeleteParameter.Image = global::MagistralDevice.Properties.Resources.Symbol_Delete;
-      this.tstbDeleteParameter.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this.tstbDeleteParameter.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.tstbDeleteParameter.Name = "tstbDeleteParameter";
-      this.tstbDeleteParameter.Size = new System.Drawing.Size(71, 22);
-      this.tstbDeleteParameter.Text = "Удалить";
-      this.tstbDeleteParameter.EnabledChanged += new System.EventHandler(this.tstbDeleteParameter_EnabledChanged);
+      this.tlpSysParams.ColumnCount = 2;
+      this.tlpSysParams.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+      this.tlpSysParams.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+      this.tlpSysParams.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.tlpSysParams.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
+      this.tlpSysParams.Location = new System.Drawing.Point(3, 3);
+      this.tlpSysParams.Margin = new System.Windows.Forms.Padding(0);
+      this.tlpSysParams.Name = "tlpSysParams";
+      this.tlpSysParams.RowCount = 1;
+      this.tlpSysParams.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+      this.tlpSysParams.Size = new System.Drawing.Size(715, 312);
+      this.tlpSysParams.TabIndex = 0;
+      // 
+      // tpUserParams
+      // 
+      this.tpUserParams.BackColor = System.Drawing.SystemColors.Control;
+      this.tpUserParams.Controls.Add(this.tlpUserParams);
+      this.tpUserParams.Location = new System.Drawing.Point(4, 22);
+      this.tpUserParams.Name = "tpUserParams";
+      this.tpUserParams.Padding = new System.Windows.Forms.Padding(3);
+      this.tpUserParams.Size = new System.Drawing.Size(721, 318);
+      this.tpUserParams.TabIndex = 1;
+      this.tpUserParams.Text = "Пользовательские";
+      // 
+      // tlpUserParams
+      // 
+      this.tlpUserParams.ColumnCount = 2;
+      this.tlpUserParams.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+      this.tlpUserParams.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+      this.tlpUserParams.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.tlpUserParams.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
+      this.tlpUserParams.Location = new System.Drawing.Point(3, 3);
+      this.tlpUserParams.Name = "tlpUserParams";
+      this.tlpUserParams.RowCount = 1;
+      this.tlpUserParams.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+      this.tlpUserParams.Size = new System.Drawing.Size(715, 312);
+      this.tlpUserParams.TabIndex = 0;
       // 
       // statusDeviceState
       // 
@@ -172,7 +206,7 @@
             this.tsslDeviceState});
       this.statusDeviceState.Location = new System.Drawing.Point(0, 428);
       this.statusDeviceState.Name = "statusDeviceState";
-      this.statusDeviceState.Size = new System.Drawing.Size(755, 22);
+      this.statusDeviceState.Size = new System.Drawing.Size(751, 22);
       this.statusDeviceState.TabIndex = 9;
       this.statusDeviceState.Text = "statusStrip1";
       // 
@@ -185,25 +219,20 @@
       // 
       // DeviceMain
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(755, 450);
+      this.ClientSize = new System.Drawing.Size(751, 450);
       this.Controls.Add(this.statusDeviceState);
       this.Controls.Add(this.gbParameters);
       this.Controls.Add(this.btStartStop);
       this.Controls.Add(this.gbAttributes);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "DeviceMain";
-      this.Text = "Эмулятор \"Магистраль\"";
       this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DeviceMain_FormClosing);
       this.Load += new System.EventHandler(this.DeviceMain_Load);
-      this.Shown += new System.EventHandler(this.DeviceMain_Shown);
       this.gbAttributes.ResumeLayout(false);
       this.gbAttributes.PerformLayout();
       this.gbParameters.ResumeLayout(false);
-      this.gbParameters.PerformLayout();
-      this.tstrParametersButtons.ResumeLayout(false);
-      this.tstrParametersButtons.PerformLayout();
+      this.tcParameters.ResumeLayout(false);
+      this.tpSysParams.ResumeLayout(false);
+      this.tpUserParams.ResumeLayout(false);
       this.statusDeviceState.ResumeLayout(false);
       this.statusDeviceState.PerformLayout();
       this.ResumeLayout(false);
@@ -224,9 +253,11 @@
     private System.Windows.Forms.GroupBox gbParameters;
     private System.Windows.Forms.StatusStrip statusDeviceState;
     private System.Windows.Forms.ToolStripStatusLabel tsslDeviceState;
-    private System.Windows.Forms.ToolStrip tstrParametersButtons;
-    private System.Windows.Forms.ToolStripButton tstbAddParameter;
-    private System.Windows.Forms.ToolStripButton tstbDeleteParameter;
+    private System.Windows.Forms.TabControl tcParameters;
+    private System.Windows.Forms.TabPage tpSysParams;
+    private System.Windows.Forms.TabPage tpUserParams;
+    private System.Windows.Forms.TableLayoutPanel tlpSysParams;
+    private System.Windows.Forms.TableLayoutPanel tlpUserParams;
   }
 }
 
