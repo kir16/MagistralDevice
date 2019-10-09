@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommonEventHandlers.cs" />
     <Compile Include="Communicator.cs" />
     <Compile Include="DataClasses\AccessLevel.cs" />
     <Compile Include="DataClasses\CommandNames.cs" />
@@ -68,19 +69,10 @@
     <Compile Include="DeviceMain.Designer.cs">
       <DependentUpon>DeviceMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="NewParameter.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="NewParameter.Designer.cs">
-      <DependentUpon>NewParameter.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="DeviceMain.resx">
       <DependentUpon>DeviceMain.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="NewParameter.resx">
-      <DependentUpon>NewParameter.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
-using InTheHand.Net.Bluetooth;
 using MagistralDevice.Properties;
 
 namespace MagistralDevice
@@ -19,12 +18,6 @@ namespace MagistralDevice
       Mutex isSingleInstance = new Mutex(true, Marshal.GetTypeLibGuidForAssembly(Assembly.GetExecutingAssembly()).ToString(), out bool owned);
       try {
         if( owned ) {
-          // Check if Bluetooth available
-          if( !BluetoothRadio.IsSupported ) {
-            MessageBox.Show(@"Не найдено доступное устройство Bluetooth", Resources.Magistral_Device_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            return;
-          }
-
           Application.EnableVisualStyles();
           Application.SetCompatibleTextRenderingDefault(false);
           Application.Run(new DeviceMain());

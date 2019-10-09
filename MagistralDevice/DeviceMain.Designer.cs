@@ -46,24 +46,24 @@
       this.tsbSysBoolAdd = new System.Windows.Forms.ToolStripButton();
       this.tsbSysBoolDelete = new System.Windows.Forms.ToolStripButton();
       this.tsSysInt = new System.Windows.Forms.ToolStrip();
-      this.tpUserParams = new System.Windows.Forms.TabPage();
-      this.tlpUserParams = new System.Windows.Forms.TableLayoutPanel();
-      this.statusDeviceState = new System.Windows.Forms.StatusStrip();
-      this.tsslDeviceState = new System.Windows.Forms.ToolStripStatusLabel();
       this.tsbSysIntAdd = new System.Windows.Forms.ToolStripButton();
       this.tsbSysIntDelete = new System.Windows.Forms.ToolStripButton();
       this.tlpSysBoolValues = new System.Windows.Forms.TableLayoutPanel();
       this.tlpSysIntValues = new System.Windows.Forms.TableLayoutPanel();
-      this.lbUserBool = new System.Windows.Forms.Label();
+      this.tpUserParams = new System.Windows.Forms.TabPage();
+      this.tlpUserParams = new System.Windows.Forms.TableLayoutPanel();
       this.lbUserInt = new System.Windows.Forms.Label();
+      this.lbUserBool = new System.Windows.Forms.Label();
       this.tsUserBool = new System.Windows.Forms.ToolStrip();
-      this.tsUserInt = new System.Windows.Forms.ToolStrip();
       this.tsbUserBoolAdd = new System.Windows.Forms.ToolStripButton();
       this.tsbUserBoolDelete = new System.Windows.Forms.ToolStripButton();
+      this.tsUserInt = new System.Windows.Forms.ToolStrip();
       this.tsbUserIntAdd = new System.Windows.Forms.ToolStripButton();
       this.tsbUserIntDelete = new System.Windows.Forms.ToolStripButton();
       this.tlpUserBoolValues = new System.Windows.Forms.TableLayoutPanel();
       this.tlpUserIntValues = new System.Windows.Forms.TableLayoutPanel();
+      this.statusDeviceState = new System.Windows.Forms.StatusStrip();
+      this.tsslDeviceState = new System.Windows.Forms.ToolStripStatusLabel();
       this.gbAttributes.SuspendLayout();
       this.gbParameters.SuspendLayout();
       this.tcParameters.SuspendLayout();
@@ -73,9 +73,9 @@
       this.tsSysInt.SuspendLayout();
       this.tpUserParams.SuspendLayout();
       this.tlpUserParams.SuspendLayout();
-      this.statusDeviceState.SuspendLayout();
       this.tsUserBool.SuspendLayout();
       this.tsUserInt.SuspendLayout();
+      this.statusDeviceState.SuspendLayout();
       this.SuspendLayout();
       // 
       // lbName
@@ -93,6 +93,7 @@
       this.tbName.Name = "tbName";
       this.tbName.Size = new System.Drawing.Size(160, 20);
       this.tbName.TabIndex = 1;
+      this.tbName.Leave += new System.EventHandler(this.tbName_Leave);
       // 
       // lbSerial
       // 
@@ -109,6 +110,7 @@
       this.tbSerial.Name = "tbSerial";
       this.tbSerial.Size = new System.Drawing.Size(120, 20);
       this.tbSerial.TabIndex = 3;
+      this.tbSerial.Leave += new System.EventHandler(this.tbSerial_Leave);
       // 
       // lbVersion
       // 
@@ -125,6 +127,7 @@
       this.tbVersion.Name = "tbVersion";
       this.tbVersion.Size = new System.Drawing.Size(100, 20);
       this.tbVersion.TabIndex = 5;
+      this.tbVersion.Leave += new System.EventHandler(this.tbVersion_Leave);
       // 
       // gbAttributes
       // 
@@ -252,6 +255,7 @@
       this.tsbSysBoolAdd.Name = "tsbSysBoolAdd";
       this.tsbSysBoolAdd.Size = new System.Drawing.Size(23, 20);
       this.tsbSysBoolAdd.Text = "Добавить";
+      this.tsbSysBoolAdd.Click += new System.EventHandler(this.tsbSysBoolAdd_Click);
       this.tsbSysBoolAdd.EnabledChanged += new System.EventHandler(this.tsbAdd_EnabledChanged);
       // 
       // tsbSysBoolDelete
@@ -262,6 +266,7 @@
       this.tsbSysBoolDelete.Name = "tsbSysBoolDelete";
       this.tsbSysBoolDelete.Size = new System.Drawing.Size(23, 20);
       this.tsbSysBoolDelete.Text = "Удалить";
+      this.tsbSysBoolDelete.Click += new System.EventHandler(this.tsbSysBoolDelete_Click);
       this.tsbSysBoolDelete.EnabledChanged += new System.EventHandler(this.tsbDel_EnabledChanged);
       // 
       // tsSysInt
@@ -274,6 +279,56 @@
       this.tsSysInt.Size = new System.Drawing.Size(358, 23);
       this.tsSysInt.TabIndex = 3;
       this.tsSysInt.Text = "tsSysInt";
+      // 
+      // tsbSysIntAdd
+      // 
+      this.tsbSysIntAdd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.tsbSysIntAdd.Image = global::MagistralDevice.Properties.Resources.Add;
+      this.tsbSysIntAdd.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.tsbSysIntAdd.Name = "tsbSysIntAdd";
+      this.tsbSysIntAdd.Size = new System.Drawing.Size(23, 20);
+      this.tsbSysIntAdd.Text = "Добавить";
+      this.tsbSysIntAdd.Click += new System.EventHandler(this.tsbSysIntAdd_Click);
+      this.tsbSysIntAdd.EnabledChanged += new System.EventHandler(this.tsbAdd_EnabledChanged);
+      // 
+      // tsbSysIntDelete
+      // 
+      this.tsbSysIntDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.tsbSysIntDelete.Image = global::MagistralDevice.Properties.Resources.Del;
+      this.tsbSysIntDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.tsbSysIntDelete.Name = "tsbSysIntDelete";
+      this.tsbSysIntDelete.Size = new System.Drawing.Size(23, 20);
+      this.tsbSysIntDelete.Text = "Удалить";
+      this.tsbSysIntDelete.Click += new System.EventHandler(this.tsbSysIntDelete_Click);
+      this.tsbSysIntDelete.EnabledChanged += new System.EventHandler(this.tsbDel_EnabledChanged);
+      // 
+      // tlpSysBoolValues
+      // 
+      this.tlpSysBoolValues.ColumnCount = 2;
+      this.tlpSysBoolValues.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 90F));
+      this.tlpSysBoolValues.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
+      this.tlpSysBoolValues.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.tlpSysBoolValues.Location = new System.Drawing.Point(3, 46);
+      this.tlpSysBoolValues.Name = "tlpSysBoolValues";
+      this.tlpSysBoolValues.RowCount = 2;
+      this.tlpSysBoolValues.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+      this.tlpSysBoolValues.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this.tlpSysBoolValues.Size = new System.Drawing.Size(351, 263);
+      this.tlpSysBoolValues.TabIndex = 4;
+      // 
+      // tlpSysIntValues
+      // 
+      this.tlpSysIntValues.ColumnCount = 2;
+      this.tlpSysIntValues.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80F));
+      this.tlpSysIntValues.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+      this.tlpSysIntValues.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.tlpSysIntValues.Location = new System.Drawing.Point(360, 46);
+      this.tlpSysIntValues.Name = "tlpSysIntValues";
+      this.tlpSysIntValues.RowCount = 2;
+      this.tlpSysIntValues.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+      this.tlpSysIntValues.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this.tlpSysIntValues.Size = new System.Drawing.Size(352, 263);
+      this.tlpSysIntValues.TabIndex = 5;
       // 
       // tpUserParams
       // 
@@ -308,70 +363,17 @@
       this.tlpUserParams.Size = new System.Drawing.Size(715, 312);
       this.tlpUserParams.TabIndex = 0;
       // 
-      // statusDeviceState
+      // lbUserInt
       // 
-      this.statusDeviceState.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsslDeviceState});
-      this.statusDeviceState.Location = new System.Drawing.Point(0, 428);
-      this.statusDeviceState.Name = "statusDeviceState";
-      this.statusDeviceState.Size = new System.Drawing.Size(751, 22);
-      this.statusDeviceState.TabIndex = 9;
-      this.statusDeviceState.Text = "statusStrip1";
-      // 
-      // tsslDeviceState
-      // 
-      this.tsslDeviceState.AutoSize = false;
-      this.tsslDeviceState.Name = "tsslDeviceState";
-      this.tsslDeviceState.Size = new System.Drawing.Size(500, 17);
-      this.tsslDeviceState.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // tsbSysIntAdd
-      // 
-      this.tsbSysIntAdd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.tsbSysIntAdd.Image = global::MagistralDevice.Properties.Resources.Add;
-      this.tsbSysIntAdd.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.tsbSysIntAdd.Name = "tsbSysIntAdd";
-      this.tsbSysIntAdd.Size = new System.Drawing.Size(23, 20);
-      this.tsbSysIntAdd.Text = "Добавить";
-      this.tsbSysIntAdd.EnabledChanged += new System.EventHandler(this.tsbAdd_EnabledChanged);
-      // 
-      // tsbSysIntDelete
-      // 
-      this.tsbSysIntDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.tsbSysIntDelete.Image = global::MagistralDevice.Properties.Resources.Del;
-      this.tsbSysIntDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.tsbSysIntDelete.Name = "tsbSysIntDelete";
-      this.tsbSysIntDelete.Size = new System.Drawing.Size(23, 20);
-      this.tsbSysIntDelete.Text = "Удалить";
-      this.tsbSysIntDelete.EnabledChanged += new System.EventHandler(this.tsbDel_EnabledChanged);
-      // 
-      // tlpSysBoolValues
-      // 
-      this.tlpSysBoolValues.ColumnCount = 2;
-      this.tlpSysBoolValues.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 90F));
-      this.tlpSysBoolValues.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-      this.tlpSysBoolValues.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.tlpSysBoolValues.Location = new System.Drawing.Point(3, 46);
-      this.tlpSysBoolValues.Name = "tlpSysBoolValues";
-      this.tlpSysBoolValues.RowCount = 2;
-      this.tlpSysBoolValues.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
-      this.tlpSysBoolValues.RowStyles.Add(new System.Windows.Forms.RowStyle());
-      this.tlpSysBoolValues.Size = new System.Drawing.Size(351, 263);
-      this.tlpSysBoolValues.TabIndex = 4;
-      // 
-      // tlpSysIntValues
-      // 
-      this.tlpSysIntValues.ColumnCount = 2;
-      this.tlpSysIntValues.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80F));
-      this.tlpSysIntValues.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
-      this.tlpSysIntValues.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.tlpSysIntValues.Location = new System.Drawing.Point(360, 46);
-      this.tlpSysIntValues.Name = "tlpSysIntValues";
-      this.tlpSysIntValues.RowCount = 2;
-      this.tlpSysIntValues.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
-      this.tlpSysIntValues.RowStyles.Add(new System.Windows.Forms.RowStyle());
-      this.tlpSysIntValues.Size = new System.Drawing.Size(352, 263);
-      this.tlpSysIntValues.TabIndex = 5;
+      this.lbUserInt.AutoSize = true;
+      this.lbUserInt.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.lbUserInt.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.lbUserInt.Location = new System.Drawing.Point(360, 0);
+      this.lbUserInt.Name = "lbUserInt";
+      this.lbUserInt.Size = new System.Drawing.Size(352, 20);
+      this.lbUserInt.TabIndex = 1;
+      this.lbUserInt.Text = "Числовые";
+      this.lbUserInt.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
       // 
       // lbUserBool
       // 
@@ -385,18 +387,6 @@
       this.lbUserBool.Text = "Логические";
       this.lbUserBool.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
       // 
-      // lbUserInt
-      // 
-      this.lbUserInt.AutoSize = true;
-      this.lbUserInt.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.lbUserInt.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.lbUserInt.Location = new System.Drawing.Point(360, 0);
-      this.lbUserInt.Name = "lbUserInt";
-      this.lbUserInt.Size = new System.Drawing.Size(352, 20);
-      this.lbUserInt.TabIndex = 1;
-      this.lbUserInt.Text = "Числовые";
-      this.lbUserInt.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-      // 
       // tsUserBool
       // 
       this.tsUserBool.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -407,6 +397,29 @@
       this.tsUserBool.Size = new System.Drawing.Size(357, 23);
       this.tsUserBool.TabIndex = 2;
       this.tsUserBool.Text = "tsUserBool";
+      // 
+      // tsbUserBoolAdd
+      // 
+      this.tsbUserBoolAdd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.tsbUserBoolAdd.Image = global::MagistralDevice.Properties.Resources.Add;
+      this.tsbUserBoolAdd.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.tsbUserBoolAdd.Name = "tsbUserBoolAdd";
+      this.tsbUserBoolAdd.Size = new System.Drawing.Size(23, 20);
+      this.tsbUserBoolAdd.Text = "Добавить";
+      this.tsbUserBoolAdd.ToolTipText = "Добавить";
+      this.tsbUserBoolAdd.Click += new System.EventHandler(this.tsbUserBoolAdd_Click);
+      this.tsbUserBoolAdd.EnabledChanged += new System.EventHandler(this.tsbAdd_EnabledChanged);
+      // 
+      // tsbUserBoolDelete
+      // 
+      this.tsbUserBoolDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.tsbUserBoolDelete.Image = global::MagistralDevice.Properties.Resources.Del;
+      this.tsbUserBoolDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.tsbUserBoolDelete.Name = "tsbUserBoolDelete";
+      this.tsbUserBoolDelete.Size = new System.Drawing.Size(23, 20);
+      this.tsbUserBoolDelete.Text = "Удалить";
+      this.tsbUserBoolDelete.Click += new System.EventHandler(this.tsbUserBoolDelete_Click);
+      this.tsbUserBoolDelete.EnabledChanged += new System.EventHandler(this.tsbDel_EnabledChanged);
       // 
       // tsUserInt
       // 
@@ -419,27 +432,6 @@
       this.tsUserInt.TabIndex = 3;
       this.tsUserInt.Text = "tsUserInt";
       // 
-      // tsbUserBoolAdd
-      // 
-      this.tsbUserBoolAdd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.tsbUserBoolAdd.Image = global::MagistralDevice.Properties.Resources.Add;
-      this.tsbUserBoolAdd.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.tsbUserBoolAdd.Name = "tsbUserBoolAdd";
-      this.tsbUserBoolAdd.Size = new System.Drawing.Size(23, 20);
-      this.tsbUserBoolAdd.Text = "Добавить";
-      this.tsbUserBoolAdd.ToolTipText = "Добавить";
-      this.tsbUserBoolAdd.EnabledChanged += new System.EventHandler(this.tsbAdd_EnabledChanged);
-      // 
-      // tsbUserBoolDelete
-      // 
-      this.tsbUserBoolDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.tsbUserBoolDelete.Image = global::MagistralDevice.Properties.Resources.Del;
-      this.tsbUserBoolDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.tsbUserBoolDelete.Name = "tsbUserBoolDelete";
-      this.tsbUserBoolDelete.Size = new System.Drawing.Size(23, 20);
-      this.tsbUserBoolDelete.Text = "Удалить";
-      this.tsbUserBoolDelete.EnabledChanged += new System.EventHandler(this.tsbDel_EnabledChanged);
-      // 
       // tsbUserIntAdd
       // 
       this.tsbUserIntAdd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -448,6 +440,7 @@
       this.tsbUserIntAdd.Name = "tsbUserIntAdd";
       this.tsbUserIntAdd.Size = new System.Drawing.Size(23, 20);
       this.tsbUserIntAdd.Text = "Добавить";
+      this.tsbUserIntAdd.Click += new System.EventHandler(this.tsbUserIntAdd_Click);
       this.tsbUserIntAdd.EnabledChanged += new System.EventHandler(this.tsbAdd_EnabledChanged);
       // 
       // tsbUserIntDelete
@@ -458,6 +451,7 @@
       this.tsbUserIntDelete.Name = "tsbUserIntDelete";
       this.tsbUserIntDelete.Size = new System.Drawing.Size(23, 20);
       this.tsbUserIntDelete.Text = "Удалить";
+      this.tsbUserIntDelete.Click += new System.EventHandler(this.tsbUserIntDelete_Click);
       this.tsbUserIntDelete.EnabledChanged += new System.EventHandler(this.tsbDel_EnabledChanged);
       // 
       // tlpUserBoolValues
@@ -488,6 +482,23 @@
       this.tlpUserIntValues.Size = new System.Drawing.Size(352, 263);
       this.tlpUserIntValues.TabIndex = 5;
       // 
+      // statusDeviceState
+      // 
+      this.statusDeviceState.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsslDeviceState});
+      this.statusDeviceState.Location = new System.Drawing.Point(0, 428);
+      this.statusDeviceState.Name = "statusDeviceState";
+      this.statusDeviceState.Size = new System.Drawing.Size(751, 22);
+      this.statusDeviceState.TabIndex = 9;
+      this.statusDeviceState.Text = "statusStrip1";
+      // 
+      // tsslDeviceState
+      // 
+      this.tsslDeviceState.AutoSize = false;
+      this.tsslDeviceState.Name = "tsslDeviceState";
+      this.tsslDeviceState.Size = new System.Drawing.Size(500, 17);
+      this.tsslDeviceState.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
       // DeviceMain
       // 
       this.ClientSize = new System.Drawing.Size(751, 450);
@@ -512,12 +523,12 @@
       this.tpUserParams.ResumeLayout(false);
       this.tlpUserParams.ResumeLayout(false);
       this.tlpUserParams.PerformLayout();
-      this.statusDeviceState.ResumeLayout(false);
-      this.statusDeviceState.PerformLayout();
       this.tsUserBool.ResumeLayout(false);
       this.tsUserBool.PerformLayout();
       this.tsUserInt.ResumeLayout(false);
       this.tsUserInt.PerformLayout();
+      this.statusDeviceState.ResumeLayout(false);
+      this.statusDeviceState.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 

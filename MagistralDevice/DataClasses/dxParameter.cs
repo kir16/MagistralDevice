@@ -10,6 +10,8 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ConvertToAutoProperty
 
@@ -22,100 +24,58 @@ namespace MagistralDevice.DataClasses
   // ReSharper disable once InconsistentNaming
   public sealed class dxParameter
   {
+    #region Private fields
+
+    private static XmlSerializer _serializer;
+
+    #endregion
+
     public string Name
     {
-      get
-      {
-        return _name;
-      }
-      set
-      {
-        _name = value;
-      }
+      get;
+      set;
     }
 
     public AccessLevel Access
     {
-      get
-      {
-        return _access;
-      }
-      set
-      {
-        _access = value;
-      }
+      get;
+      set;
     }
 
     public bool? BoolValue
     {
-      get
-      {
-        return _boolValue;
-      }
-      set
-      {
-        _boolValue = value;
-      }
+      get;
+      set;
     }
 
     public int? IntValue
     {
-      get
-      {
-        return _intValue;
-      }
-      set
-      {
-        _intValue = value;
-      }
+      get;
+      set;
     }
 
     public string StringValue
     {
-      get
-      {
-        return _stringValue;
-      }
-      set
-      {
-        _stringValue = value;
-      }
+      get;
+      set;
     }
 
     public int? MinInt
     {
-      get
-      {
-        return _minInt;
-      }
-      set
-      {
-        _minInt = value;
-      }
+      get;
+      set;
     }
 
     public int? MaxInt
     {
-      get
-      {
-        return _maxInt;
-      }
-      set
-      {
-        _maxInt = value;
-      }
+      get;
+      set;
     }
 
     public int? StringLength
     {
-      get
-      {
-        return _stringLength;
-      }
-      set
-      {
-        _stringLength = value;
-      }
+      get;
+      set;
     }
 
     private static XmlSerializer Serializer
@@ -154,7 +114,6 @@ namespace MagistralDevice.DataClasses
         // ReSharper restore PossibleNullReferenceException
 
         return _serializer;
-
       }
     }
 
@@ -215,6 +174,7 @@ namespace MagistralDevice.DataClasses
       if( exception != null ) {
         throw exception;
       }
+
       return result;
     }
 
@@ -244,28 +204,6 @@ namespace MagistralDevice.DataClasses
     public dxParameter Clone() {
       return(dxParameter)MemberwiseClone();
     }
-
-    #endregion
-
-    #region Private fields
-
-    private string _name;
-
-    private AccessLevel _access;
-
-    private bool? _boolValue;
-
-    private int? _intValue;
-
-    private string _stringValue;
-
-    private int? _minInt;
-
-    private int? _maxInt;
-
-    private int? _stringLength;
-
-    private static XmlSerializer _serializer;
 
     #endregion
 
@@ -324,6 +262,7 @@ namespace MagistralDevice.DataClasses
       if( exception != null ) {
         throw exception;
       }
+
       return result;
     }
 
@@ -334,6 +273,7 @@ namespace MagistralDevice.DataClasses
         if( Serializer != null ) {
           return(dxParameter)Serializer.Deserialize(XmlReader.Create(stringReader));
         }
+
         return new dxParameter();
       }
       finally {

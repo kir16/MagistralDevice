@@ -142,24 +142,24 @@ namespace MagistralDevice.DataClasses
         if( _serializer == null ) {
           _serializer = new XmlSerializerFactory().CreateSerializer(typeof(dxDeviceData));
           _serializer.UnknownNode += delegate(object sender, XmlNodeEventArgs e) {
-                                      Debug.WriteLine("[Unknown Node] Ln {0} Col {1} Object: {2} LocalName {3}, NodeName: {4}", e.LineNumber, e.LinePosition, e.ObjectBeingDeserialized.GetType().FullName, e.LocalName, e.Name);
-                                    };
+                                       Debug.WriteLine("[Unknown Node] Ln {0} Col {1} Object: {2} LocalName {3}, NodeName: {4}", e.LineNumber, e.LinePosition, e.ObjectBeingDeserialized.GetType().FullName, e.LocalName, e.Name);
+                                     };
           _serializer.UnknownElement += delegate(object sender, XmlElementEventArgs e) {
-                                         Debug.WriteLine("[Unknown Element  ] Ln {0} Col {1} Object : {2} ExpectedElements {3}, Element : {4}",
-                                                         e.LineNumber,
-                                                         e.LinePosition,
-                                                         e.ObjectBeingDeserialized.GetType().FullName,
-                                                         e.ExpectedElements,
-                                                         e.Element.InnerXml);
-                                       };
+                                          Debug.WriteLine("[Unknown Element  ] Ln {0} Col {1} Object : {2} ExpectedElements {3}, Element : {4}",
+                                                          e.LineNumber,
+                                                          e.LinePosition,
+                                                          e.ObjectBeingDeserialized.GetType().FullName,
+                                                          e.ExpectedElements,
+                                                          e.Element.InnerXml);
+                                        };
           _serializer.UnknownAttribute += delegate(object sender, XmlAttributeEventArgs e) {
-                                           Debug.WriteLine("[Unknown Attribute] Ln {0} Col {1} Object : {2} LocalName {3}, Text : {4}",
-                                                           e.LineNumber,
-                                                           e.LinePosition,
-                                                           e.ObjectBeingDeserialized.GetType().FullName,
-                                                           e.ExpectedAttributes,
-                                                           e.Attr.Name);
-                                         };
+                                            Debug.WriteLine("[Unknown Attribute] Ln {0} Col {1} Object : {2} LocalName {3}, Text : {4}",
+                                                            e.LineNumber,
+                                                            e.LinePosition,
+                                                            e.ObjectBeingDeserialized.GetType().FullName,
+                                                            e.ExpectedAttributes,
+                                                            e.Attr.Name);
+                                          };
         }
 
         return _serializer;
@@ -329,6 +329,7 @@ namespace MagistralDevice.DataClasses
       if( exception != null ) {
         throw exception;
       }
+
       return result;
     }
 
