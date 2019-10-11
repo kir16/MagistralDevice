@@ -239,6 +239,7 @@ namespace MagistralDevice.DataClasses
       Name = "";
       IntValue = 0;
       BoolValue = false;
+      Id = Guid.NewGuid().ToString();
     }
 
     #region Clone method
