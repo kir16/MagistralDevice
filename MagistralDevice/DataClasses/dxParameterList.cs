@@ -24,7 +24,7 @@ namespace MagistralDevice.DataClasses
   {
     #region Private fields
 
-    private static XmlSerializer _serializer;
+    private static XmlSerializer s_serializer;
 
     #endregion
 
@@ -45,20 +45,20 @@ namespace MagistralDevice.DataClasses
     {
       get
       {
-        if( _serializer != null ) {
-          return _serializer;
+        if( s_serializer != null ) {
+          return s_serializer;
         }
 
-        _serializer = new XmlSerializerFactory().CreateSerializer(typeof(dxParameterList));
-        if( _serializer == null ) {
+        s_serializer = new XmlSerializerFactory().CreateSerializer(typeof(dxParameterList));
+        if( s_serializer == null ) {
           return null;
         }
 
         // ReSharper disable PossibleNullReferenceException
-        _serializer.UnknownNode += delegate(object sender, XmlNodeEventArgs e) {
+        s_serializer.UnknownNode += delegate(object sender, XmlNodeEventArgs e) {
                                      Debug.WriteLine("[Unknown Node] Ln {0} Col {1} Object: {2} LocalName {3}, NodeName: {4}", e.LineNumber, e.LinePosition, e.ObjectBeingDeserialized.GetType().FullName, e.LocalName, e.Name);
                                    };
-        _serializer.UnknownElement += delegate(object sender, XmlElementEventArgs e) {
+        s_serializer.UnknownElement += delegate(object sender, XmlElementEventArgs e) {
                                         Debug.WriteLine("[Unknown Element  ] Ln {0} Col {1} Object : {2} ExpectedElements {3}, Element : {4}",
                                                         e.LineNumber,
                                                         e.LinePosition,
@@ -66,7 +66,7 @@ namespace MagistralDevice.DataClasses
                                                         e.ExpectedElements,
                                                         e.Element.InnerXml);
                                       };
-        _serializer.UnknownAttribute += delegate(object sender, XmlAttributeEventArgs e) {
+        s_serializer.UnknownAttribute += delegate(object sender, XmlAttributeEventArgs e) {
                                           Debug.WriteLine("[Unknown Attribute] Ln {0} Col {1} Object : {2} LocalName {3}, Text : {4}",
                                                           e.LineNumber,
                                                           e.LinePosition,
@@ -76,7 +76,7 @@ namespace MagistralDevice.DataClasses
                                         };
         // ReSharper enable PossibleNullReferenceException
 
-        return _serializer;
+        return s_serializer;
       }
     }
 
@@ -102,7 +102,11 @@ namespace MagistralDevice.DataClasses
       StreamWriter streamWriter = null;
       try {
         string xmlString = Serialize();
-        FileInfo xmlFile = new FileInfo(fileName ?? throw new ArgumentNullException(nameof(fileName)));
+
+        if( fileName == null ) {
+          throw new ArgumentNullException(nameof(fileName));
+        }
+        FileInfo xmlFile = new FileInfo(fileName);
         streamWriter = xmlFile.CreateText();
         streamWriter.WriteLine(xmlString);
         streamWriter.Close();
@@ -121,7 +125,7 @@ namespace MagistralDevice.DataClasses
     /// <returns>true if this Serializer can deserialize the object; otherwise, false</returns>
     public static bool LoadFromFile(string fileName, out dxParameterList obj, out Exception exception) {
       exception = null;
-      obj = default(dxParameterList);
+      obj = default;
       try {
         obj = LoadFromFile(fileName);
         return true;
@@ -145,7 +149,10 @@ namespace MagistralDevice.DataClasses
       FileStream file = null;
       StreamReader sr = null;
       try {
-        file = new FileStream(fileName ?? throw new ArgumentNullException(nameof(fileName)), FileMode.Open, FileAccess.Read);
+        if( fileName == null ) {
+          throw new ArgumentNullException(nameof(fileName));
+        }
+        file = new FileStream(fileName, FileMode.Open, FileAccess.Read);
         sr = new StreamReader(file);
         string xmlString = sr.ReadToEnd();
         sr.Close();
@@ -208,7 +215,7 @@ namespace MagistralDevice.DataClasses
     /// <returns>true if this Serializer can deserialize the object; otherwise, false</returns>
     public static bool Deserialize(string input, out dxParameterList obj, out Exception exception) {
       exception = null;
-      obj = default(dxParameterList);
+      obj = default;
       try {
         obj = Deserialize(input);
         return true;
@@ -231,7 +238,10 @@ namespace MagistralDevice.DataClasses
     public static dxParameterList Deserialize(string input) {
       StringReader stringReader = null;
       try {
-        stringReader = new StringReader(input ?? throw new ArgumentNullException(nameof(input)));
+        if( string.IsNullOrEmpty(input) ) {
+          return null;
+        }
+        stringReader = new StringReader(input);
         if( Serializer != null ) {
           return(dxParameterList)Serializer.Deserialize(XmlReader.Create(stringReader));
         }
@@ -245,13 +255,18 @@ namespace MagistralDevice.DataClasses
 
     public static dxParameterList Deserialize(Stream s) {
       if( Serializer != null ) {
-        return(dxParameterList)Serializer.Deserialize(s ?? throw new ArgumentNullException(nameof(s)));
+        if( s == null ) {
+          throw new ArgumentNullException(nameof(s));
+        }
+        return(dxParameterList)Serializer.Deserialize(s);
       }
 
       return new dxParameterList();
     }
 
     #endregion
+
+    public dxParameter this[int index] { get { return ParameterItem[index]; } }
   }
 }
 #pragma warning restore

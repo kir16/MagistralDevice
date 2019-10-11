@@ -70,7 +70,7 @@ namespace MagistralDevice
             }
           }
         }
-        catch( Exception e ) {
+        catch( Exception ) {
           return;
         }
       }

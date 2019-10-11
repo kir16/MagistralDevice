@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
+
 using MagistralDevice.DataClasses;
 using MagistralDevice.Properties;
 
@@ -19,10 +20,7 @@ namespace MagistralDevice
 
       _interactionControls = new object[]
                              {
-                                 tbName,
-                                 tbSerial,
-                                 tbVersion,
-                                 tcParameters
+                               tbName, tbSerial, tbVersion, tsbLoadConfig, tsbSaveConfig, tsbAddParameter, tsbRemoveParameter
                              };
     }
 
@@ -56,51 +54,35 @@ namespace MagistralDevice
       if( tbVersion != null ) {
         tbVersion.Text = _data.Attributes.Version;
       }
-
-      UpdateValuesControls();
     }
 
     private void CreateValuesControls() {
-      if( _data?.SystemBoolParameters?.ParameterItem == null || _data?.SystemIntParameters?.ParameterItem == null || _data?.UserBoolParameters?.ParameterItem == null || _data?.UserIntParameters?.ParameterItem == null ) {
+      if( _data?.Parameters?.ParameterItem == null || tlpParameters?.RowStyles == null ) {
         return;
       }
 
-      for( int index = 0; index < _data.SystemBoolParameters.ParameterItem.Count; ++index ) {
-        AddBoolControls(tlpSysBoolValues, index);
+      tlpParameters.RowCount = 2;
+
+      foreach( dxParameter parameter in _data.Parameters.ParameterItem ) {
+        ++tlpParameters.RowCount;
+
+        RowStyle rowStyle = tlpParameters.RowStyles[tlpParameters.RowCount - 2];
+        // ReSharper disable once PossibleNullReferenceException
+        rowStyle.Height = 22;
+        CreateRowControls(tlpParameters, tlpParameters.RowCount - 2, parameter);
       }
 
-      for( int index = 0; index < _data.SystemIntParameters.ParameterItem.Count; ++index ) {
-        AddIntControls(tlpSysIntValues, index);
-      }
-
-      for( int index = 0; index < _data.UserBoolParameters.ParameterItem.Count; ++index ) {
-        AddBoolControls(tlpUserBoolValues, index);
-      }
-
-      for( int index = 0; index < _data.UserIntParameters.ParameterItem.Count; ++index ) {
-        AddIntControls(tlpUserIntValues, index);
-      }
+      // ReSharper disable once PossibleNullReferenceException
+      tlpParameters.RowStyles[tlpParameters.RowCount - 1].SizeType = SizeType.AutoSize;
     }
 
     private void UpdateValuesControls() {
-      if( _data?.SystemBoolParameters?.ParameterItem == null || _data?.SystemIntParameters?.ParameterItem == null || _data?.UserBoolParameters?.ParameterItem == null || _data?.UserIntParameters?.ParameterItem == null ) {
+      if( _data?.Parameters?.ParameterItem == null ) {
         return;
       }
 
-      for( int index = 0; index < _data.SystemBoolParameters.ParameterItem.Count; ++index ) {
-        UpdateBoolControls(tlpSysBoolValues, index, _data.SystemBoolParameters.ParameterItem[index]);
-      }
-
-      for( int index = 0; index < _data.SystemIntParameters.ParameterItem.Count; ++index ) {
-        UpdateIntControls(tlpSysIntValues, index, _data.SystemIntParameters.ParameterItem[index]);
-      }
-
-      for( int index = 0; index < _data.UserBoolParameters.ParameterItem.Count; ++index ) {
-        UpdateBoolControls(tlpUserBoolValues, index, _data.UserBoolParameters.ParameterItem[index]);
-      }
-
-      for( int index = 0; index < _data.UserIntParameters.ParameterItem.Count; ++index ) {
-        UpdateIntControls(tlpUserIntValues, index, _data.UserIntParameters.ParameterItem[index]);
+      for( int index = 0; index < _data.Parameters.ParameterItem.Count; ++index ) {
+        UpdateRowControls(tlpParameters, index + 1, _data.Parameters[index]);
       }
     }
 
@@ -113,75 +95,75 @@ namespace MagistralDevice
       _data.Attributes.Name = tbName?.Text;
       _data.Attributes.Serial = tbSerial?.Text;
       _data.Attributes.Version = tbVersion?.Text;
+
       // ReSharper restore PossibleNullReferenceException
-      UpdateValues();
+      UpdateParameters();
     }
 
-    [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
-    private void UpdateValues() {
-      if( tlpSysBoolValues == null
-          || tlpSysIntValues == null
-          || tlpUserBoolValues == null
-          || tlpUserIntValues == null
-          || _data?.SystemBoolParameters?.ParameterItem == null
-          || _data?.SystemIntParameters?.ParameterItem == null
-          || _data?.UserBoolParameters?.ParameterItem == null
-          || _data?.UserIntParameters?.ParameterItem == null ) {
+    private void UpdateParameters() {
+      if( tlpParameters == null ) {
         return;
       }
 
-      for( int index = 0; index < tlpSysBoolValues.RowCount; ++index ) {
-        if( !(tlpSysBoolValues.GetControlFromPosition(1, index) is CheckBox valueBox) ) {
-          continue;
-        }
-
-        _data.SystemBoolParameters.ParameterItem[index].BoolValue = valueBox.Checked;
-      }
-
-      for( int index = 0; index < tlpSysIntValues.RowCount; ++index ) {
-        if( !(tlpSysIntValues.GetControlFromPosition(1, index) is TextBox valueBox) ) {
-          continue;
-        }
-
-        _data.SystemBoolParameters.ParameterItem[index].IntValue = int.Parse(valueBox.Text ?? throw new InvalidOperationException());
-      }
-
-      for( int index = 0; index < tlpUserBoolValues.RowCount; ++index ) {
-        if( !(tlpUserBoolValues.GetControlFromPosition(1, index) is CheckBox valueBox) ) {
-          continue;
-        }
-
-        _data.UserBoolParameters.ParameterItem[index].BoolValue = valueBox.Checked;
-      }
-
-      for( int index = 0; index < tlpUserIntValues.RowCount; ++index ) {
-        if( !(tlpUserIntValues.GetControlFromPosition(1, index) is TextBox valueBox) ) {
-          continue;
-        }
-
-        _data.SystemBoolParameters.ParameterItem[index].IntValue = int.Parse(valueBox.Text ?? throw new InvalidOperationException());
+      for( int row = 1; row < tlpParameters.RowCount - 1; ++row ) {
+        UpdateRowData(row);
       }
     }
 
     private void EnableControls(bool enabled) {
-      // ReSharper disable once PossibleNullReferenceException
+      EnableParametersControls(enabled);
+
+      if( _interactionControls == null ) {
+        return;
+      }
+
       foreach( object theControl in _interactionControls ) {
         switch( theControl ) {
-          case TextBox _:
-            ((TextBox)theControl).ReadOnly = !enabled;
+          case TextBox box:
+          {
+            box.ReadOnly = !enabled;
+
             break;
-          case ToolStripButton _:
-            ((ToolStripButton)theControl).Enabled = enabled;
+          }
+          case ToolStripButton button:
+          {
+            button.Enabled = enabled;
+
             break;
-          case TabControl _:
-            ((TabControl)theControl).Enabled = enabled;
+          }
+        }
+      }
+    }
+
+    private void EnableParametersControls(bool enabled) {
+      if( tlpParameters?.Controls == null ) {
+        return;
+      }
+
+      foreach( Control theControl in tlpParameters?.Controls ) {
+        switch( theControl ) {
+          case TextBox box:
+          {
+            box.ReadOnly = !enabled;
             break;
+          }
+          case ComboBox combo:
+          {
+            combo.Enabled = enabled;
+            break;
+          }
+          case CheckBox check:
+          {
+            check.Enabled = enabled;
+            break;
+          }
         }
       }
     }
 
     private bool StartListening() {
       BluetoothRadio mainRadio = BluetoothRadio.PrimaryRadio;
+
       if( mainRadio == null ) {
         return false;
       }
@@ -199,123 +181,194 @@ namespace MagistralDevice
       _radioListener = null;
     }
 
-    private static TextBox AddTextBoxToPanel(TableLayoutPanel panel, int column, int row) {
-      if( panel == null ) {
-        return null;
+    private static void NewNameTextBox(TableLayoutPanel panel, int row, dxParameter parameter) {
+      if( panel == null || Settings.Default == null || parameter == null ) {
+        return;
       }
 
       TextBox textBox = new TextBox
                         {
-                            Parent = panel,
-                            Dock = DockStyle.Fill
+                          Parent = panel
+                        , Dock = DockStyle.Fill
+                        , Margin = new Padding(1),
+                          Text = parameter.Name
                         };
-      panel.Controls.Add(textBox, column, row);
-      return textBox;
+
+      textBox.TextChanged += CommonEventHandlers.tbName_TextChanged;
+
+      panel.Controls.Add(textBox, Settings.Default.NameColumn, row);
     }
 
-    private static CheckBox AddCheckBoxToPanel(TableLayoutPanel panel, int column, int row) {
-      if( panel == null ) {
-        return null;
+    private static void NewValueCheckBox(TableLayoutPanel panel, int row, dxParameter parameter) {
+      if( panel == null || Settings.Default == null || parameter == null ) {
+        return;
       }
 
-      CheckBox checkBox = new CheckBox
+      CheckBox valueBox = new CheckBox
                           {
-                              Parent = panel,
-                              Padding = new Padding(3, 3, 3, 3)
+                           Dock = DockStyle.Fill
+                          , Margin = new Padding(1),
+                            Checked = parameter.BoolValue
                           };
-      panel.Controls.Add(checkBox, column, row);
-      return checkBox;
+
+      valueBox.Click += CommonEventHandlers.chbValue_Click;
+
+      panel.Controls.Add(valueBox, Settings.Default.ValueColumn, row);
     }
 
-    private static void AddBoolControls(TableLayoutPanel panel, int row) {
-      if( panel == null ) {
+    private static void NewValueTextBox(TableLayoutPanel panel, int row, dxParameter parameter) {
+      if( panel == null || Settings.Default == null || parameter == null ) {
         return;
       }
 
-      if( panel.RowCount <= row ) {
-        panel.RowCount = row + 1;
-      }
+      TextBox valueBox = new TextBox
+                         {
+                           Dock = DockStyle.Fill
+                         , Margin = new Padding(1)
+                         , Text = $@"{parameter.IntValue:D1}"
+                         };
 
-      TextBox tbParamName = panel.GetControlFromPosition(0, row) as TextBox;
-      CheckBox chbParamValue = panel.GetControlFromPosition(1, row) as CheckBox;
-      if( tbParamName != null && chbParamValue != null ) {
-        return;
-      }
 
-      tbParamName = AddTextBoxToPanel(panel, 0, row);
-      if( tbParamName != null ) {
-        tbParamName.Leave += CommonEventHandlers.tbParamName_Leave;
-      }
+      valueBox.TextChanged += CommonEventHandlers.tbValue_TextChanged;
+      valueBox.KeyPress += CommonEventHandlers.tbValue_KeyPress;
 
-      chbParamValue = AddCheckBoxToPanel(panel, 1, row);
-      if( chbParamValue == null ) {
-        return;
-      }
-
-      chbParamValue.Click += CommonEventHandlers.chbParamValue_Click;
+      panel.Controls.Add(valueBox, Settings.Default.ValueColumn, row);
     }
 
-    private static void UpdateBoolControls(TableLayoutPanel panel, int row, dxParameter parameter) {
-      if( panel == null || parameter == null ) {
+    private static void NewAccessComboBox(TableLayoutPanel panel, int row, dxParameter parameter) {
+      if( panel == null || Settings.Default == null || parameter == null) {
         return;
       }
 
-      TextBox tbParamName = panel.GetControlFromPosition(0, row) as TextBox;
-      CheckBox chbParamValue = panel.GetControlFromPosition(1, row) as CheckBox;
-      if( tbParamName == null || chbParamValue == null ) {
+      ComboBox accessComboBox = new ComboBox
+                                {
+                                  Dock = DockStyle.Fill
+                                , Margin = new Padding(1)
+                                , DropDownStyle = ComboBoxStyle.DropDownList
+                                , AutoCompleteMode = AutoCompleteMode.Suggest
+                                };
+
+      accessComboBox.Items.AddRange(new object[]
+                                    {
+                                      Settings.Default.SystemAccess, Settings.Default.UserAccess
+                                    });
+
+      accessComboBox.Text = parameter.Access == AccessLevel.Sys ? Settings.Default.SystemAccess : Settings.Default.UserAccess;
+
+      accessComboBox.TextChanged += CommonEventHandlers.cbAccess_TextChanged;
+      
+      panel.Controls.Add(accessComboBox, Settings.Default.AccessColumn, row);
+    }
+
+    private static void NewTypeComboBox(TableLayoutPanel panel, int row, dxParameter parameter) {
+      if( panel == null || Settings.Default == null || parameter == null ) {
         return;
       }
 
-      tbParamName.Text = parameter.Name;
-      if( parameter.BoolValue != null ) {
-        chbParamValue.Checked = (bool)parameter.BoolValue;
+      ComboBox typeComboBox = new ComboBox
+                                {
+                                  Dock = DockStyle.Fill
+                                , Margin = new Padding(1)
+                                , DropDownStyle = ComboBoxStyle.DropDownList
+                                , AutoCompleteMode = AutoCompleteMode.Suggest
+                                };
+
+      typeComboBox.Items.AddRange(new object[]
+                                    {
+                                      Settings.Default.BoolType, Settings.Default.IntType
+                                    });
+
+      typeComboBox.Text = parameter.Type == ParameterType.Bool ? Settings.Default.BoolType : Settings.Default.IntType;
+
+      typeComboBox.TextChanged += CommonEventHandlers.cbType_TextChanged;
+      
+      panel.Controls.Add(typeComboBox, Settings.Default.TypeColumn, row);
+    }
+
+    private static void CreateRowControls(TableLayoutPanel panel, int row, dxParameter parameter) {
+      NewAccessComboBox(panel, row, parameter);
+      NewTypeComboBox(panel, row, parameter);
+      NewNameTextBox(panel, row, parameter);
+
+      // ReSharper disable once PossibleNullReferenceException
+      if( parameter.Type == ParameterType.Bool ) {
+        NewValueCheckBox(panel, row, parameter);
+      }
+      else {
+        NewValueTextBox(panel, row, parameter);
       }
     }
 
-    private static void AddIntControls(TableLayoutPanel panel, int row) {
-      if( panel == null ) {
+    private static void UpdateRowControls(TableLayoutPanel panel, int row, dxParameter parameter) {
+      if( Settings.Default == null || panel == null || parameter == null || row < 1 || row > panel.RowCount - 2 ) {
         return;
       }
 
-      if( panel.RowCount <= row ) {
-        panel.RowCount = row + 1;
+      if( panel.GetControlFromPosition(Settings.Default.AccessColumn, row) is ComboBox accessComboBox ) {
+        accessComboBox.Text = parameter.Access == AccessLevel.Sys ? Settings.Default.SystemAccess : Settings.Default.UserAccess;
       }
 
-      TextBox tbParamName = panel.GetControlFromPosition(0, row) as TextBox;
-      TextBox tbParamValue = panel.GetControlFromPosition(1, row) as TextBox;
-      if( tbParamName != null && tbParamValue != null ) {
-        return;
+      if( panel.GetControlFromPosition(Settings.Default.TypeColumn, row) is ComboBox typeComboBox ) {
+        typeComboBox.Text = parameter.Type == ParameterType.Bool ? Settings.Default.BoolType : Settings.Default.IntType;
       }
 
-      tbParamName = AddTextBoxToPanel(panel, 0, row);
-      if( tbParamName != null ) {
-        tbParamName.Leave += CommonEventHandlers.tbParamName_Leave;
+      if( panel.GetControlFromPosition(Settings.Default.NameColumn, row) is TextBox nameTextBox ) {
+        nameTextBox.Text = parameter.Name;
       }
 
-      tbParamValue = AddTextBoxToPanel(panel, 1, row);
-      if( tbParamValue == null ) {
-        return;
+      switch( parameter.Type ) {
+        case ParameterType.Bool when panel.GetControlFromPosition(Settings.Default.ValueColumn, row) is CheckBox valueCheckBox:
+          valueCheckBox.Checked = parameter.BoolValue;
+          break;
+        case ParameterType.Int when panel.GetControlFromPosition(Settings.Default.ValueColumn, row) is TextBox valueTextBox:
+          valueTextBox.Text = $@"{parameter.IntValue:D1}";
+          break;
+        default:
+          throw new ArgumentOutOfRangeException();
       }
-
-      tbParamValue.Leave += CommonEventHandlers.tbParamValue_Leave;
-      tbParamValue.KeyPress += CommonEventHandlers.tbParamValue_KeyPress;
-      // ReSharper disable once LocalizableElement
     }
 
-    private static void UpdateIntControls(TableLayoutPanel panel, int row, dxParameter parameter) {
-      if( panel == null || parameter == null ) {
+    private void UpdateRowData(int row) {
+      if( Settings.Default == null || tlpParameters == null || _data?.Parameters?.ParameterItem == null || row < 1 || row > _data.Parameters.ParameterItem.Count - 1 ) {
         return;
       }
 
-      TextBox tbParamName = panel.GetControlFromPosition(0, row) as TextBox;
-      TextBox tbParamValue = panel.GetControlFromPosition(1, row) as TextBox;
-      if( tbParamName == null || tbParamValue == null ) {
+      // ReSharper disable PossibleNullReferenceException
+      if( _data.Parameters[row - 1] == null ) {
         return;
       }
 
-      tbParamName.Text = parameter.Name;
-      // ReSharper disable once UseStringInterpolation
-      tbParamValue.Text = parameter.IntValue != null ? string.Format("{0:D}", (int)parameter.IntValue) : @"0";
+      if( tlpParameters.GetControlFromPosition(Settings.Default.AccessColumn, row) is ComboBox accessComboBox ) {
+        _data.Parameters[row - 1].Access = accessComboBox.Text == Settings.Default.SystemAccess ? AccessLevel.Sys : AccessLevel.Usr;
+      }
+
+      if( tlpParameters.GetControlFromPosition(Settings.Default.TypeColumn, row) is ComboBox typeComboBox ) {
+        _data.Parameters[row - 1].Type = typeComboBox.Text == Settings.Default.BoolType ? ParameterType.Bool : ParameterType.Int;
+      }
+
+      if( tlpParameters.GetControlFromPosition(Settings.Default.NameColumn, row) is TextBox nameTextBox ) {
+        _data.Parameters[row - 1].Name = nameTextBox.Text;
+      }
+
+      Control valueControl = tlpParameters.GetControlFromPosition(Settings.Default.ValueColumn, row);
+      switch( _data.Parameters[row - 1].Type ) {
+        case ParameterType.Bool:
+        {
+          if( valueControl is CheckBox box ) {
+            _data.Parameters[row - 1].BoolValue = box.Checked;
+          }
+
+          break;
+        }
+        case ParameterType.Int:
+        {
+          if( valueControl is TextBox box ) {
+            _data.Parameters[row - 1].IntValue = int.Parse(box.Text ?? throw new InvalidOperationException());
+          }
+          break;
+        }
+      }
+      // ReSharper restore PossibleNullReferenceException
     }
 
     #endregion Private methods
@@ -326,35 +379,23 @@ namespace MagistralDevice
       // Check if Bluetooth available
       if( !BluetoothRadio.IsSupported ) {
         MessageBox.Show(@"Не найдено доступное устройство Bluetooth", Resources.Magistral_Device_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-        if( btStartStop != null ) {
-          btStartStop.Enabled = false;
+
+        if( tsbStartStopEmulation != null ) {
+          tsbStartStopEmulation.Enabled = false;
         }
       }
 
       Icon = Resources.Reaktor;
 
       _data = dxDeviceData.Deserialize(Settings.Default?.DeviceData);
-      if( _data?.SystemBoolParameters?.ParameterItem == null || _data?.SystemIntParameters?.ParameterItem == null || _data?.UserBoolParameters?.ParameterItem == null || _data?.UserIntParameters?.ParameterItem == null ) {
+
+      if( _data?.Parameters?.ParameterItem == null ) {
         _data = new dxDeviceData();
       }
 
-      // ReSharper disable PossibleNullReferenceException
-      if( tlpSysBoolValues != null ) {
-        tlpSysBoolValues.Tag = _data.SystemBoolParameters.ParameterItem;
+      if( tlpParameters != null ) {
+        tlpParameters.Tag = _data;
       }
-
-      if( tlpSysIntValues != null ) {
-        tlpSysIntValues.Tag = _data.SystemIntParameters.ParameterItem;
-      }
-
-      if( tlpUserBoolValues != null ) {
-        tlpUserBoolValues.Tag = _data.UserBoolParameters.ParameterItem;
-      }
-
-      if( tlpUserIntValues != null ) {
-        tlpUserIntValues.Tag = _data.UserIntParameters.ParameterItem;
-      }
-      // ReSharper restore PossibleNullReferenceException
 
       CreateValuesControls();
       UpdateControls();
@@ -369,7 +410,7 @@ namespace MagistralDevice
       Settings.Default.Save();
     }
 
-    private void tbName_Leave(object sender, EventArgs e) {
+    private void tbName_TextChanged(object sender, EventArgs e) {
       if( _data?.Attributes == null ) {
         return;
       }
@@ -377,7 +418,7 @@ namespace MagistralDevice
       _data.Attributes.Name = (sender as TextBox)?.Text;
     }
 
-    private void tbSerial_Leave(object sender, EventArgs e) {
+    private void tbSerial_TextChanged(object sender, EventArgs e) {
       if( _data?.Attributes == null ) {
         return;
       }
@@ -385,7 +426,7 @@ namespace MagistralDevice
       _data.Attributes.Serial = (sender as TextBox)?.Text;
     }
 
-    private void tbVersion_Leave(object sender, EventArgs e) {
+    private void tbVersion_TextChanged(object sender, EventArgs e) {
       if( _data?.Attributes == null ) {
         return;
       }
@@ -393,248 +434,53 @@ namespace MagistralDevice
       _data.Attributes.Version = (sender as TextBox)?.Text;
     }
 
-    private void btStartStop_Click(object sender, EventArgs e) {
+    private void tsbStartStopEmulation_Click(object sender, EventArgs e) {
       if( _radioListener == null ) {
+        UpdateData();
+
         if( !StartListening() ) {
           return;
         }
 
         // ReSharper disable once PossibleNullReferenceException
-        btStartStop.Text = Resources.btStartStop_TextWhenWork;
+        tsbStartStopEmulation.Text = Resources.btStartStop_TextWhenWork;
         EnableControls(false);
       }
       else {
         StopListening();
+
         // ReSharper disable once PossibleNullReferenceException
-        btStartStop.Text = Resources.btStartStop_TextWhenIdle;
+        tsbStartStopEmulation.Text = Resources.btStartStop_TextWhenIdle;
         EnableControls(true);
       }
     }
 
-    private void tsbAdd_EnabledChanged(object sender, EventArgs e) {
-      ToolStripButton button = (ToolStripButton)sender;
-      if( button != null ) {
-        button.Image = button.Enabled ? Resources.Add : Resources.Add_Dis;
-      }
-    }
-
-    private void tsbDel_EnabledChanged(object sender, EventArgs e) {
-      ToolStripButton button = (ToolStripButton)sender;
-      if( button != null ) {
-        button.Image = button.Enabled ? Resources.Del : Resources.Del_Dis;
-      }
-    }
-
-    private void tsbSysBoolAdd_Click(object sender, EventArgs e) {
-      if( _data?.SystemBoolParameters?.ParameterItem == null ) {
+    private void tsbSave_Click(object sender, EventArgs e) {
+      if( _data == null ) {
         return;
       }
 
-      dxParameter parameter = new dxParameter
-                              {
-                                  BoolValue = false
-                              };
-      _data.SystemBoolParameters.ParameterItem.Add(parameter);
-      AddBoolControls(tlpSysBoolValues, _data.SystemBoolParameters.ParameterItem.Count - 1);
+      UpdateData();
+
+      // ReSharper disable PossibleNullReferenceException
+      if( sfdParameters.ShowDialog() == DialogResult.OK ) {
+        _data.SaveToFile(sfdParameters.FileName);
+      }
+
+      // ReSharper restore PossibleNullReferenceException
     }
 
-    private void tsbSysBoolDelete_Click(object sender, EventArgs e) {
-      if( _data?.SystemBoolParameters?.ParameterItem == null || tlpSysBoolValues == null || _data.SystemBoolParameters.ParameterItem.Count == 0 ) {
-        return;
-      }
-
-      int deleteAt = -1;
-      for( int index = 0; index < tlpSysBoolValues.RowCount; ++index ) {
-        Control textBox = tlpSysBoolValues.GetControlFromPosition(0, index);
-        Control checkBox = tlpSysBoolValues.GetControlFromPosition(1, index);
-        if( (textBox == null || !textBox.Focused) && (checkBox == null || !checkBox.Focused) ) {
-          continue;
+    private void tsbLoad_Click(object sender, EventArgs e) {
+      if( _data != null ) {
+        if( MessageBox.Show(@"Заменить существующие параметры?", Resources.Magistral_Device_Title, MessageBoxButtons.YesNoCancel) != DialogResult.Yes ) {
+          return;
         }
-
-        deleteAt = index;
-        if( textBox != null && checkBox != null ) {
-          tlpSysBoolValues.Controls.Remove(textBox);
-          tlpSysBoolValues.Controls.Remove(checkBox);
-        }
-
-        break;
       }
 
-      if( deleteAt < 0 ) {
-        deleteAt = _data.SystemBoolParameters.ParameterItem.Count - 1;
+      // ReSharper disable once PossibleNullReferenceException
+      if( ofdParameters.ShowDialog() == DialogResult.OK ) {
+        _data = dxDeviceData.LoadFromFile(ofdParameters.FileName);
       }
-
-      for( int index = deleteAt + 1; index < _data.SystemBoolParameters.ParameterItem.Count; ++index ) {
-        Control textBox = tlpSysBoolValues.GetControlFromPosition(0, index);
-        Control checkBox = tlpSysBoolValues.GetControlFromPosition(1, index);
-        tlpSysBoolValues.SetRow(textBox ?? throw new InvalidOperationException(), index - 1);
-        tlpSysBoolValues.SetRow(checkBox ?? throw new InvalidOperationException(), index - 1);
-      }
-
-      if( tlpSysBoolValues.RowCount > 1 ) {
-        tlpSysBoolValues.RowCount -= 1;
-      }
-
-      _data.SystemBoolParameters.ParameterItem.RemoveAt(deleteAt);
-    }
-
-    private void tsbSysIntAdd_Click(object sender, EventArgs e) {
-      if( _data?.SystemIntParameters?.ParameterItem == null ) {
-        return;
-      }
-
-      dxParameter parameter = new dxParameter
-                              {
-                                  IntValue = 0
-                              };
-      _data.SystemIntParameters.ParameterItem.Add(parameter);
-      AddIntControls(tlpSysIntValues, _data.SystemIntParameters.ParameterItem.Count - 1);
-    }
-
-    private void tsbSysIntDelete_Click(object sender, EventArgs e) {
-      if( _data?.SystemIntParameters?.ParameterItem == null || tlpSysIntValues == null || _data.SystemIntParameters.ParameterItem.Count == 0 ) {
-        return;
-      }
-
-      int deleteAt = -1;
-      for( int index = 0; index < tlpSysIntValues.RowCount; ++index ) {
-        Control textBox = tlpSysIntValues.GetControlFromPosition(0, index);
-        Control valueBox = tlpSysIntValues.GetControlFromPosition(1, index);
-        if( (textBox == null || !textBox.Focused) && (valueBox == null || !valueBox.Focused) ) {
-          continue;
-        }
-
-        deleteAt = index;
-        if( textBox != null && valueBox != null ) {
-          tlpSysIntValues.Controls.Remove(textBox);
-          tlpSysIntValues.Controls.Remove(valueBox);
-        }
-
-        break;
-      }
-
-      if( deleteAt < 0 ) {
-        deleteAt = _data.SystemIntParameters.ParameterItem.Count - 1;
-      }
-
-      for( int index = deleteAt + 1; index < _data.SystemIntParameters.ParameterItem.Count; ++index ) {
-        Control textBox = tlpSysIntValues.GetControlFromPosition(0, index);
-        Control valueBox = tlpSysIntValues.GetControlFromPosition(1, index);
-        tlpSysIntValues.SetRow(textBox ?? throw new InvalidOperationException(), index - 1);
-        tlpSysIntValues.SetRow(valueBox ?? throw new InvalidOperationException(), index - 1);
-      }
-
-      if( tlpSysIntValues.RowCount > 1 ) {
-        tlpSysIntValues.RowCount -= 1;
-      }
-
-      _data.SystemIntParameters.ParameterItem.RemoveAt(deleteAt);
-    }
-
-    private void tsbUserBoolAdd_Click(object sender, EventArgs e) {
-      if( _data?.UserBoolParameters?.ParameterItem == null ) {
-        return;
-      }
-
-      dxParameter parameter = new dxParameter
-                              {
-                                  BoolValue = false
-                              };
-      _data.UserBoolParameters.ParameterItem.Add(parameter);
-      AddBoolControls(tlpUserBoolValues, _data.UserBoolParameters.ParameterItem.Count - 1);
-    }
-
-    private void tsbUserBoolDelete_Click(object sender, EventArgs e) {
-      if( _data?.UserBoolParameters?.ParameterItem == null || tlpUserBoolValues == null || _data.UserBoolParameters.ParameterItem.Count == 0 ) {
-        return;
-      }
-
-      int deleteAt = -1;
-      for( int index = 0; index < tlpUserBoolValues.RowCount; ++index ) {
-        Control textBox = tlpUserBoolValues.GetControlFromPosition(0, index);
-        Control checkBox = tlpUserBoolValues.GetControlFromPosition(1, index);
-        if( (textBox == null || !textBox.Focused) && (checkBox == null || !checkBox.Focused) ) {
-          continue;
-        }
-
-        deleteAt = index;
-        if( textBox != null && checkBox != null ) {
-          tlpUserBoolValues.Controls.Remove(textBox);
-          tlpUserBoolValues.Controls.Remove(checkBox);
-        }
-
-        break;
-      }
-
-      if( deleteAt < 0 ) {
-        deleteAt = _data.UserBoolParameters.ParameterItem.Count - 1;
-      }
-
-      for( int index = deleteAt + 1; index < _data.UserBoolParameters.ParameterItem.Count; ++index ) {
-        Control textBox = tlpUserBoolValues.GetControlFromPosition(0, index);
-        Control checkBox = tlpUserBoolValues.GetControlFromPosition(1, index);
-        tlpUserBoolValues.SetRow(textBox ?? throw new InvalidOperationException(), index - 1);
-        tlpUserBoolValues.SetRow(checkBox ?? throw new InvalidOperationException(), index - 1);
-      }
-
-      if( tlpUserBoolValues.RowCount > 1 ) {
-        tlpUserBoolValues.RowCount -= 1;
-      }
-
-      _data.UserBoolParameters.ParameterItem.RemoveAt(deleteAt);
-    }
-
-    private void tsbUserIntAdd_Click(object sender, EventArgs e) {
-      if( _data?.UserIntParameters?.ParameterItem == null ) {
-        return;
-      }
-
-      dxParameter parameter = new dxParameter
-                              {
-                                  IntValue = 0
-                              };
-      _data.UserIntParameters.ParameterItem.Add(parameter);
-      AddIntControls(tlpSysIntValues, _data.UserIntParameters.ParameterItem.Count - 1);
-    }
-
-    private void tsbUserIntDelete_Click(object sender, EventArgs e) {
-      if( _data?.UserIntParameters?.ParameterItem == null || tlpUserIntValues == null || _data.UserIntParameters.ParameterItem.Count == 0 ) {
-        return;
-      }
-
-      int deleteAt = -1;
-      for( int index = 0; index < tlpUserIntValues.RowCount; ++index ) {
-        Control textBox = tlpUserIntValues.GetControlFromPosition(0, index);
-        Control valueBox = tlpUserIntValues.GetControlFromPosition(1, index);
-        if( (textBox == null || !textBox.Focused) && (valueBox == null || !valueBox.Focused) ) {
-          continue;
-        }
-
-        deleteAt = index;
-        if( textBox != null && valueBox != null ) {
-          tlpUserIntValues.Controls.Remove(textBox);
-          tlpUserIntValues.Controls.Remove(valueBox);
-        }
-
-        break;
-      }
-
-      if( deleteAt < 0 ) {
-        deleteAt = _data.UserIntParameters.ParameterItem.Count - 1;
-      }
-
-      for( int index = deleteAt + 1; index < _data.UserIntParameters.ParameterItem.Count; ++index ) {
-        Control textBox = tlpUserIntValues.GetControlFromPosition(0, index);
-        Control valueBox = tlpUserIntValues.GetControlFromPosition(1, index);
-        tlpUserIntValues.SetRow(textBox ?? throw new InvalidOperationException(), index - 1);
-        tlpUserIntValues.SetRow(valueBox ?? throw new InvalidOperationException(), index - 1);
-      }
-
-      if( tlpUserIntValues.RowCount > 1 ) {
-        tlpUserIntValues.RowCount -= 1;
-      }
-
-      _data.UserIntParameters.ParameterItem.RemoveAt(deleteAt);
     }
 
     #endregion Event handlers

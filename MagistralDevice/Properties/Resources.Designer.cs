@@ -19,7 +19,7 @@ namespace MagistralDevice.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -71,16 +71,6 @@ namespace MagistralDevice.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Add_Dis {
-            get {
-                object obj = ResourceManager.GetObject("Add_Dis", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Запустить.
         /// </summary>
         internal static string btStartStop_TextWhenIdle {
@@ -101,9 +91,9 @@ namespace MagistralDevice.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Del {
+        internal static System.Drawing.Bitmap Conn_Add {
             get {
-                object obj = ResourceManager.GetObject("Del", resourceCulture);
+                object obj = ResourceManager.GetObject("Conn_Add", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -111,9 +101,19 @@ namespace MagistralDevice.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Del_Dis {
+        internal static System.Drawing.Bitmap Conn_Del {
             get {
-                object obj = ResourceManager.GetObject("Del_Dis", resourceCulture);
+                object obj = ResourceManager.GetObject("Conn_Del", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Del {
+            get {
+                object obj = ResourceManager.GetObject("Del", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -128,12 +128,32 @@ namespace MagistralDevice.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Open {
+            get {
+                object obj = ResourceManager.GetObject("Open", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon Reaktor {
             get {
                 object obj = ResourceManager.GetObject("Reaktor", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Save {
+            get {
+                object obj = ResourceManager.GetObject("Save", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

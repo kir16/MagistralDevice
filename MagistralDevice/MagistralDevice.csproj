@@ -63,6 +63,7 @@
     <Compile Include="DataClasses\dxMessageList.cs" />
     <Compile Include="DataClasses\dxParameter.cs" />
     <Compile Include="DataClasses\dxParameterList.cs" />
+    <Compile Include="DataClasses\ParameterType.cs" />
     <Compile Include="DeviceMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -103,6 +104,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Reaktor.ico" />
+    <None Include="Resources\Save.png" />
+    <None Include="Resources\Save Dis.png" />
+    <None Include="Resources\Open.png" />
+    <None Include="Resources\Open Dis.png" />
+    <None Include="Resources\Conn Del.png" />
+    <None Include="Resources\Conn Del Dis.png" />
+    <None Include="Resources\Conn Add.png" />
+    <None Include="Resources\Conn Add Dis.png" />
     <None Include="Resources\Del.png" />
     <None Include="Resources\Del Dis.png" />
     <None Include="Resources\Add.png" />

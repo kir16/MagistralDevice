@@ -20,6 +20,7 @@ using System.Xml.Serialization;
 namespace MagistralDevice.DataClasses
 {
   [XmlRoot(ElementName = "DeviceData")]
+
   // ReSharper disable once InconsistentNaming
   public sealed class dxDeviceData
   {
@@ -27,10 +28,7 @@ namespace MagistralDevice.DataClasses
     ///   DeviceData class constructor
     /// </summary>
     public dxDeviceData() {
-      _userIntParameters = new dxParameterList();
-      _userBoolParameters = new dxParameterList();
-      _systemIntParameters = new dxParameterList();
-      _systemBoolParameters = new dxParameterList();
+      _parameters = new dxParameterList();
       _attributes = new dxDeviceAttributes();
     }
 
@@ -55,83 +53,24 @@ namespace MagistralDevice.DataClasses
       }
     }
 
-    public dxParameterList SystemBoolParameters
+    public dxParameterList Parameters
     {
       get
       {
-        return _systemBoolParameters;
+        return _parameters;
       }
       set
       {
-        if( _systemBoolParameters == value ) {
+        if( _parameters == value ) {
           return;
         }
 
-        if( _systemBoolParameters == null
-            || _systemBoolParameters.Equals(value) != true ) {
-          _systemBoolParameters = value;
-          OnPropertyChanged("SystemBoolParameters");
-        }
-      }
-    }
-
-    public dxParameterList SystemIntParameters
-    {
-      get
-      {
-        return _systemIntParameters;
-      }
-      set
-      {
-        if( _systemIntParameters == value ) {
+        if( _parameters != null && _parameters.Equals(value) ) {
           return;
         }
 
-        if( _systemIntParameters == null
-            || _systemIntParameters.Equals(value) != true ) {
-          _systemIntParameters = value;
-          OnPropertyChanged("SystemIntParameters");
-        }
-      }
-    }
-
-    public dxParameterList UserBoolParameters
-    {
-      get
-      {
-        return _userBoolParameters;
-      }
-      set
-      {
-        if( _userBoolParameters == value ) {
-          return;
-        }
-
-        if( _userBoolParameters == null
-            || _userBoolParameters.Equals(value) != true ) {
-          _userBoolParameters = value;
-          OnPropertyChanged("UserBoolParameters");
-        }
-      }
-    }
-
-    public dxParameterList UserIntParameters
-    {
-      get
-      {
-        return _userIntParameters;
-      }
-      set
-      {
-        if( _userIntParameters == value ) {
-          return;
-        }
-
-        if( _userIntParameters == null
-            || _userIntParameters.Equals(value) != true ) {
-          _userIntParameters = value;
-          OnPropertyChanged("UserIntParameters");
-        }
+        _parameters = value;
+        OnPropertyChanged("SystemBoolParameters");
       }
     }
 
@@ -139,30 +78,33 @@ namespace MagistralDevice.DataClasses
     {
       get
       {
-        if( _serializer == null ) {
-          _serializer = new XmlSerializerFactory().CreateSerializer(typeof(dxDeviceData));
-          _serializer.UnknownNode += delegate(object sender, XmlNodeEventArgs e) {
-                                       Debug.WriteLine("[Unknown Node] Ln {0} Col {1} Object: {2} LocalName {3}, NodeName: {4}", e.LineNumber, e.LinePosition, e.ObjectBeingDeserialized.GetType().FullName, e.LocalName, e.Name);
-                                     };
-          _serializer.UnknownElement += delegate(object sender, XmlElementEventArgs e) {
-                                          Debug.WriteLine("[Unknown Element  ] Ln {0} Col {1} Object : {2} ExpectedElements {3}, Element : {4}",
-                                                          e.LineNumber,
-                                                          e.LinePosition,
-                                                          e.ObjectBeingDeserialized.GetType().FullName,
-                                                          e.ExpectedElements,
-                                                          e.Element.InnerXml);
-                                        };
-          _serializer.UnknownAttribute += delegate(object sender, XmlAttributeEventArgs e) {
-                                            Debug.WriteLine("[Unknown Attribute] Ln {0} Col {1} Object : {2} LocalName {3}, Text : {4}",
-                                                            e.LineNumber,
-                                                            e.LinePosition,
-                                                            e.ObjectBeingDeserialized.GetType().FullName,
-                                                            e.ExpectedAttributes,
-                                                            e.Attr.Name);
-                                          };
+        if( s_serializer == null ) {
+          s_serializer = new XmlSerializerFactory().CreateSerializer(typeof(dxDeviceData));
+
+          s_serializer.UnknownNode += delegate(object sender, XmlNodeEventArgs e) {
+                                        Debug.WriteLine("[Unknown Node] Ln {0} Col {1} Object: {2} LocalName {3}, NodeName: {4}", e.LineNumber, e.LinePosition, e.ObjectBeingDeserialized.GetType().FullName, e.LocalName, e.Name);
+                                      };
+
+          s_serializer.UnknownElement += delegate(object sender, XmlElementEventArgs e) {
+                                           Debug.WriteLine("[Unknown Element  ] Ln {0} Col {1} Object : {2} ExpectedElements {3}, Element : {4}"
+                                                         , e.LineNumber
+                                                         , e.LinePosition
+                                                         , e.ObjectBeingDeserialized.GetType().FullName
+                                                         , e.ExpectedElements
+                                                         , e.Element.InnerXml);
+                                         };
+
+          s_serializer.UnknownAttribute += delegate(object sender, XmlAttributeEventArgs e) {
+                                             Debug.WriteLine("[Unknown Attribute] Ln {0} Col {1} Object : {2} LocalName {3}, Text : {4}"
+                                                           , e.LineNumber
+                                                           , e.LinePosition
+                                                           , e.ObjectBeingDeserialized.GetType().FullName
+                                                           , e.ExpectedAttributes
+                                                           , e.Attr.Name);
+                                           };
         }
 
-        return _serializer;
+        return s_serializer;
       }
     }
 
@@ -182,6 +124,7 @@ namespace MagistralDevice.DataClasses
     /// <returns>true if can serialize and save into file; otherwise, false</returns>
     public bool SaveToFile(string fileName, out Exception exception) {
       exception = null;
+
       try {
         SaveToFile(fileName);
         return true;
@@ -194,9 +137,15 @@ namespace MagistralDevice.DataClasses
 
     public void SaveToFile(string fileName) {
       StreamWriter streamWriter = null;
+
       try {
         string xmlString = Serialize();
-        FileInfo xmlFile = new FileInfo(fileName ?? throw new ArgumentNullException(nameof(fileName)));
+
+        if( fileName == null ) {
+          throw new ArgumentNullException(nameof(fileName));
+        }
+
+        FileInfo xmlFile = new FileInfo(fileName);
         streamWriter = xmlFile.CreateText();
         streamWriter.WriteLine(xmlString);
         streamWriter.Close();
@@ -215,7 +164,8 @@ namespace MagistralDevice.DataClasses
     /// <returns>true if this Serializer can deserialize the object; otherwise, false</returns>
     public static bool LoadFromFile(string fileName, out dxDeviceData obj, out Exception exception) {
       exception = null;
-      obj = default(dxDeviceData);
+      obj = default;
+
       try {
         obj = LoadFromFile(fileName);
         return true;
@@ -228,6 +178,7 @@ namespace MagistralDevice.DataClasses
 
     public static bool LoadFromFile(string fileName, out dxDeviceData obj) {
       bool result = LoadFromFile(fileName, out obj, out Exception exception);
+
       if( exception != null ) {
         throw exception;
       }
@@ -238,8 +189,13 @@ namespace MagistralDevice.DataClasses
     public static dxDeviceData LoadFromFile(string fileName) {
       FileStream file = null;
       StreamReader sr = null;
+
       try {
-        file = new FileStream(fileName ?? throw new ArgumentNullException(nameof(fileName)), FileMode.Open, FileAccess.Read);
+        if( fileName == null ) {
+          throw new ArgumentNullException(nameof(fileName));
+        }
+
+        file = new FileStream(fileName, FileMode.Open, FileAccess.Read);
         sr = new StreamReader(file);
         string xmlString = sr.ReadToEnd();
         sr.Close();
@@ -267,11 +223,8 @@ namespace MagistralDevice.DataClasses
     #region Private fields
 
     private dxDeviceAttributes _attributes;
-    private dxParameterList _systemBoolParameters;
-    private dxParameterList _systemIntParameters;
-    private dxParameterList _userBoolParameters;
-    private dxParameterList _userIntParameters;
-    private static XmlSerializer _serializer;
+    private dxParameterList _parameters;
+    private static XmlSerializer s_serializer;
 
     #endregion
 
@@ -284,13 +237,16 @@ namespace MagistralDevice.DataClasses
     public string Serialize() {
       StreamReader streamReader = null;
       MemoryStream memoryStream = null;
+
       try {
         memoryStream = new MemoryStream();
+
         XmlWriterSettings xmlWriterSettings = new XmlWriterSettings
                                               {
-                                                  Indent = true,
-                                                  IndentChars = "  "
+                                                Indent = true
+                                              , IndentChars = "  "
                                               };
+
         XmlWriter xmlWriter = XmlWriter.Create(memoryStream, xmlWriterSettings);
         Serializer.Serialize(xmlWriter, this);
         memoryStream.Seek(0, SeekOrigin.Begin);
@@ -313,7 +269,8 @@ namespace MagistralDevice.DataClasses
     /// <returns>true if this Serializer can deserialize the object; otherwise, false</returns>
     public static bool Deserialize(string input, out dxDeviceData obj, out Exception exception) {
       exception = null;
-      obj = default(dxDeviceData);
+      obj = default;
+
       try {
         obj = Deserialize(input);
         return true;
@@ -326,6 +283,7 @@ namespace MagistralDevice.DataClasses
 
     public static bool Deserialize(string input, out dxDeviceData obj) {
       bool result = Deserialize(input, out obj, out Exception exception);
+
       if( exception != null ) {
         throw exception;
       }
@@ -335,8 +293,13 @@ namespace MagistralDevice.DataClasses
 
     public static dxDeviceData Deserialize(string input) {
       StringReader stringReader = null;
+
       try {
-        stringReader = new StringReader(input ?? throw new ArgumentNullException(nameof(input)));
+        if( string.IsNullOrEmpty(input) ) {
+          return null;
+        }
+
+        stringReader = new StringReader(input);
         return(dxDeviceData)Serializer.Deserialize(XmlReader.Create(stringReader));
       }
       finally {
@@ -345,7 +308,11 @@ namespace MagistralDevice.DataClasses
     }
 
     public static dxDeviceData Deserialize(Stream s) {
-      return(dxDeviceData)Serializer.Deserialize(s ?? throw new ArgumentNullException(nameof(s)));
+      if( s == null ) {
+        throw new ArgumentNullException(nameof(s));
+      }
+
+      return(dxDeviceData)Serializer.Deserialize(s);
     }
 
     #endregion

@@ -9,8 +9,8 @@ namespace MagistralDevice.DataClasses
 {
   public enum AccessLevel
   {
-    SYS,
-    USR
+    Sys,
+    Usr
   }
 }
 #pragma warning restore

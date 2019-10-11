@@ -104,7 +104,12 @@ namespace MagistralDevice.DataClasses
       StreamWriter streamWriter = null;
       try {
         string xmlString = Serialize();
-        FileInfo xmlFile = new FileInfo(fileName ?? throw new ArgumentNullException(nameof(fileName)));
+
+        if( fileName == null ) {
+          throw new ArgumentNullException(nameof(fileName));
+        }
+
+        FileInfo xmlFile = new FileInfo(fileName);
         streamWriter = xmlFile.CreateText();
         streamWriter.WriteLine(xmlString);
         streamWriter.Close();
@@ -135,7 +140,8 @@ namespace MagistralDevice.DataClasses
     }
 
     public static bool LoadFromFile(string fileName, out dxDeviceAttributes obj) {
-      bool result = LoadFromFile(fileName, out obj, out Exception exception);
+      Exception exception;
+      bool result = LoadFromFile(fileName, out obj, out exception);
       if( exception != null ) {
         throw exception;
       }
@@ -147,7 +153,10 @@ namespace MagistralDevice.DataClasses
       FileStream file = null;
       StreamReader sr = null;
       try {
-        file = new FileStream(fileName ?? throw new ArgumentNullException(nameof(fileName)), FileMode.Open, FileAccess.Read);
+        if( fileName == null ) {
+          throw new ArgumentNullException(nameof(fileName));
+        }
+        file = new FileStream(fileName, FileMode.Open, FileAccess.Read);
         sr = new StreamReader(file);
         string xmlString = sr.ReadToEnd();
         sr.Close();
@@ -223,7 +232,8 @@ namespace MagistralDevice.DataClasses
     }
 
     public static bool Deserialize(string input, out dxDeviceAttributes obj) {
-      bool result = Deserialize(input, out obj, out Exception exception);
+      Exception exception;
+      bool result = Deserialize(input, out obj, out exception);
       if( exception != null ) {
         throw exception;
       }
@@ -234,7 +244,10 @@ namespace MagistralDevice.DataClasses
     public static dxDeviceAttributes Deserialize(string input) {
       StringReader stringReader = null;
       try {
-        stringReader = new StringReader(input ?? throw new ArgumentNullException(nameof(input)));
+        if( string.IsNullOrEmpty(input) ) {
+          return null;
+        }
+        stringReader = new StringReader(input);
         if( Serializer != null ) {
           return(dxDeviceAttributes)Serializer.Deserialize(XmlReader.Create(stringReader));
         }
@@ -248,7 +261,10 @@ namespace MagistralDevice.DataClasses
 
     public static dxDeviceAttributes Deserialize(Stream s) {
       if( Serializer != null ) {
-        return(dxDeviceAttributes)Serializer.Deserialize(s ?? throw new ArgumentNullException(nameof(s)));
+        if( s == null ) {
+          throw new ArgumentNullException(nameof(s));
+        }
+        return(dxDeviceAttributes)Serializer.Deserialize(s);
       }
 
       return new dxDeviceAttributes();
