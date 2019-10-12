@@ -6,6 +6,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using InTheHand.Net.Sockets;
 
+using MagistralDevice.DataClasses;
+
 namespace MagistralDevice
 {
   internal class Communicator : IDisposable
@@ -62,11 +64,11 @@ namespace MagistralDevice
               continue;
             }
 
-            StringBuilder builder = new StringBuilder();
-            Stream stream = client.GetStream();
-            StreamReader reader = new StreamReader(stream);
-            while( true ) {
-              builder.Append(reader.ReadToEnd());
+            StreamReader reader = new StreamReader(client.GetStream());
+            string commandText = reader.ReadToEnd();
+            dxCommand command = dxCommand.Deserialize(commandText);
+
+            if( command.Name == CommandNames.Get_Attributes ) {
             }
           }
         }

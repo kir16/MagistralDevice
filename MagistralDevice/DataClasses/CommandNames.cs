@@ -11,7 +11,7 @@ namespace MagistralDevice.DataClasses
 {
   public enum CommandNames
   {
-    GET_ATTRIBUTES
+    Get_Attributes
   }
 }
 #pragma warning restore

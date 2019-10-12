@@ -106,5 +106,14 @@ namespace MagistralDevice.Properties {
                 return ((short)(this["TypeColumn"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("22")]
+        public short DefaultRowHeight {
+            get {
+                return ((short)(this["DefaultRowHeight"]));
+            }
+        }
     }
 }

@@ -300,7 +300,10 @@ namespace MagistralDevice.DataClasses
         }
 
         stringReader = new StringReader(input);
-        return(dxDeviceData)Serializer.Deserialize(XmlReader.Create(stringReader));
+        return (dxDeviceData)Serializer.Deserialize(XmlReader.Create(stringReader));
+      }
+      catch( Exception ) {
+        return null;
       }
       finally {
         stringReader?.Dispose();
@@ -312,7 +315,12 @@ namespace MagistralDevice.DataClasses
         throw new ArgumentNullException(nameof(s));
       }
 
-      return(dxDeviceData)Serializer.Deserialize(s);
+      try {
+        return(dxDeviceData)Serializer.Deserialize(s);
+      }
+      catch( Exception ) {
+        return null;
+      }
     }
 
     #endregion

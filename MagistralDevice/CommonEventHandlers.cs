@@ -14,9 +14,8 @@ namespace MagistralDevice
         return;
       }
 
-      int dummy;
 
-      if( e != null && !int.TryParse(nameBox.Text, out dummy) ) {
+      if(e != null  && !string.IsNullOrEmpty(nameBox.Text) && !int.TryParse(nameBox.Text,out int dummy)) {
         e.KeyChar = (char)0;
       }
     }
@@ -38,7 +37,7 @@ namespace MagistralDevice
         return;
       }
 
-      int index = panel.GetRow(valueBox);
+      int index = panel.GetRow(valueBox) - 1;
 
       if( data.Parameters[index] == null ) {
         return;
@@ -101,7 +100,7 @@ namespace MagistralDevice
       }
     }
 
-    public static void cbAccess_TextChanged(object sender, EventArgs e) {
+    public static void cbAccess_SelectedIndexChanged(object sender, EventArgs e) {
       if( Settings.Default == null ) {
         return;
       }
@@ -127,37 +126,7 @@ namespace MagistralDevice
         return;
       }
 
-      data.Parameters[index].Access = accessBox.Text == Settings.Default.SystemAccess ? AccessLevel.Sys : AccessLevel.Usr;
-    }
-
-    public static void cbType_TextChanged(object sender, EventArgs e) {
-      if( Settings.Default == null ) {
-        return;
-      }
-
-      if( !(sender is ComboBox typeBox) ) {
-        return;
-      }
-
-      if( !(typeBox.Parent is TableLayoutPanel panel) ) {
-        return;
-      }
-
-      if( !(panel.Tag is dxDeviceData data) ) {
-        return;
-      }
-
-      if( data.Parameters == null ) {
-        return;
-      }
-
-      int index = panel.GetRow(typeBox) - 1;
-
-      if( data.Parameters[index] == null ) {
-        return;
-      }
-
-      data.Parameters[index].Type = typeBox.Text == Settings.Default.BoolType ? ParameterType.Bool : ParameterType.Int;
+      data.Parameters[index].Access = accessBox.SelectedIndex == 0 ? AccessLevel.Sys : AccessLevel.Usr;
     }
   }
 }
