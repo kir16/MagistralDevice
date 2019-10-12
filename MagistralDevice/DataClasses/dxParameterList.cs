@@ -41,6 +41,15 @@ namespace MagistralDevice.DataClasses
       set;
     }
 
+    [XmlIgnore]
+    public int Count
+    {
+      get
+      {
+        return ParameterItem?.Count ?? 0;
+      }
+    }
+
     private static XmlSerializer Serializer
     {
       get
@@ -266,6 +275,7 @@ namespace MagistralDevice.DataClasses
 
     #endregion
 
+    [XmlIgnore]
     public dxParameter this[int index] { get { return ParameterItem[index]; } }
   }
 }

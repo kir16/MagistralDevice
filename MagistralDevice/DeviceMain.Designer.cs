@@ -153,7 +153,7 @@
       this.tlpParameters.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
       this.tlpParameters.ColumnCount = 4;
       this.tlpParameters.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 55F));
-      this.tlpParameters.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+      this.tlpParameters.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
       this.tlpParameters.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
       this.tlpParameters.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
       this.tlpParameters.Controls.Add(this.lbParameterAccess, 0, 0);
@@ -193,7 +193,7 @@
       this.lbParameterType.Location = new System.Drawing.Point(57, 1);
       this.lbParameterType.Margin = new System.Windows.Forms.Padding(0);
       this.lbParameterType.Name = "lbParameterType";
-      this.lbParameterType.Size = new System.Drawing.Size(50, 22);
+      this.lbParameterType.Size = new System.Drawing.Size(60, 22);
       this.lbParameterType.TabIndex = 1;
       this.lbParameterType.Text = "Тип";
       this.lbParameterType.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -204,10 +204,10 @@
       this.lbParameterName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.lbParameterName.Dock = System.Windows.Forms.DockStyle.Fill;
       this.lbParameterName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.lbParameterName.Location = new System.Drawing.Point(108, 1);
+      this.lbParameterName.Location = new System.Drawing.Point(118, 1);
       this.lbParameterName.Margin = new System.Windows.Forms.Padding(0);
       this.lbParameterName.Name = "lbParameterName";
-      this.lbParameterName.Size = new System.Drawing.Size(535, 22);
+      this.lbParameterName.Size = new System.Drawing.Size(525, 22);
       this.lbParameterName.TabIndex = 2;
       this.lbParameterName.Text = "Имя";
       this.lbParameterName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;

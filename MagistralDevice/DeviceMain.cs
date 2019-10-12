@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -56,38 +57,38 @@ namespace MagistralDevice
       }
     }
 
+    [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
     private void CreateValuesControls() {
-      if( _data?.Parameters?.ParameterItem == null || tlpParameters?.RowStyles == null || Settings.Default == null ) {
+      if( _data?.Parameters?.ParameterItem == null ) {
         return;
       }
 
-      tlpParameters.RowCount = 2;
-
-      RowStyle rowStyle;
-
-      foreach( dxParameter parameter in _data.Parameters.ParameterItem ) {
-        // ReSharper disable once PossibleNullReferenceException
-        tlpParameters.RowCount++;
-
-        rowStyle = tlpParameters.RowStyles[tlpParameters.RowCount - 2];
-
-        if( rowStyle != null ) {
-          rowStyle.SizeType = SizeType.Absolute;
-          rowStyle.Height = Settings.Default.DefaultRowHeight;
+      for( int index = 0; index < _data.Parameters.Count; ++index ) {
+        CreateRowControls(index + 1, _data.Parameters[index]);
+        if( index + 1 >= tlpParameters.RowStyles.Count ) {
+          tlpParameters.RowStyles.Add(new RowStyle
+                                      {
+                                        SizeType = SizeType.Absolute
+                                      , Height = Settings.Default.DefaultRowHeight
+                                      });
         }
-
-        CreateRowControls(tlpParameters.RowCount - 2, parameter);
+        else {
+          tlpParameters.RowStyles[index + 1].SizeType = SizeType.Absolute;
+          tlpParameters.RowStyles[index + 1].Height = Settings.Default.DefaultRowHeight;
+        }
       }
 
-      // ReSharper disable once PossibleNullReferenceException
-      rowStyle = tlpParameters.RowStyles[tlpParameters.RowCount - 1];
-
-      if( rowStyle == null ) {
-        return;
+      if( tlpParameters.RowStyles.Count < _data.Parameters.Count + 1 ) {
+        tlpParameters.RowStyles.Add(new RowStyle
+                                    {
+                                      SizeType = SizeType.Percent
+                                    , Height = 100
+                                    });
       }
-
-      rowStyle.SizeType = SizeType.Percent;
-      rowStyle.Height = 100;
+      else {
+        tlpParameters.RowStyles[tlpParameters.RowStyles.Count - 1].SizeType = SizeType.Percent;
+        tlpParameters.RowStyles[tlpParameters.RowStyles.Count - 1].Height = 100;
+      }
     }
 
     private void UpdateValuesControls() {
@@ -113,13 +114,13 @@ namespace MagistralDevice
     }
 
     private void UpdateParameters() {
-      if( tlpParameters == null ) {
+      if( _data?.Parameters == null ) {
         return;
       }
 
       // ReSharper disable once PossibleNullReferenceException
-      for( int row = 1; row < tlpParameters.RowCount - 1; ++row ) {
-        UpdateRowData(row);
+      for( int row = 0; row < _data.Parameters.Count; ++row ) {
+        UpdateRowData(row + 1);
       }
     }
 
@@ -175,11 +176,11 @@ namespace MagistralDevice
     }
 
     private int GetSelectedRow() {
-      if( tlpParameters == null ) {
+      if( tlpParameters == null || _data?.Parameters == null ) {
         return -1;
       }
 
-      for( int rowIndex = 1; rowIndex < tlpParameters.RowCount - 1; ++rowIndex ) {
+      for( int rowIndex = 1; rowIndex <= _data.Parameters.Count; ++rowIndex ) {
         for( int columnIndex = 0; columnIndex < tlpParameters.ColumnCount; ++columnIndex ) {
           Control theControl = tlpParameters.GetControlFromPosition(columnIndex, rowIndex);
 
@@ -193,7 +194,7 @@ namespace MagistralDevice
     }
 
     private void RemoveRowControls(int row) {
-      if( tlpParameters == null ) {
+      if( tlpParameters == null || _data?.Parameters == null || row < 1 || row > _data.Parameters.Count ) {
         return;
       }
 
@@ -207,7 +208,7 @@ namespace MagistralDevice
     }
 
     private void ShiftRowControlsUp(int row) {
-      if( tlpParameters == null || row < 2 || row > tlpParameters.RowCount - 2 ) {
+      if( tlpParameters == null || _data?.Parameters == null || row < 1 || row > _data.Parameters.Count ) {
         return;
       }
 
@@ -266,7 +267,7 @@ namespace MagistralDevice
       if( parameter.Type == ParameterType.Bool ) {
         valueControl = new CheckBox
                             {
-                              Dock = DockStyle.Fill
+                              Dock = DockStyle.Top
                             , Margin = new Padding(1)
                             , Checked = parameter.BoolValue
                             };
@@ -441,7 +442,7 @@ namespace MagistralDevice
         _data = new dxDeviceData();
       }
 
-      if( tlpParameters != null ) {
+      if( tlpParameters?.RowStyles != null ) {
         tlpParameters.Tag = _data;
       }
 
@@ -547,28 +548,11 @@ namespace MagistralDevice
       }
 
       _data.Parameters.ParameterItem.Add(new dxParameter());
-      tlpParameters.RowCount++;
-
-      RowStyle style = tlpParameters.RowStyles[tlpParameters.RowCount - 2];
-      if( style != null ) {
-        style.SizeType = SizeType.Absolute;
-        style.Height = Settings.Default.DefaultRowHeight;
-      }
-
-      style = tlpParameters.RowStyles[tlpParameters.RowCount - 1];
-      if( style != null ) {
-        style.SizeType = SizeType.Percent;
-        style.Height = 100;
-      }
-
-      CreateRowControls(tlpParameters.RowCount - 2, _data.Parameters[_data.Parameters.ParameterItem.Count - 1]);
+      CreateRowControls(_data.Parameters.ParameterItem.Count, _data.Parameters[_data.Parameters.ParameterItem.Count - 1]);
     }
 
+    [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
     private void tsbRemoveParameter_Click(object sender, EventArgs e) {
-      if( _data?.Parameters == null || tlpParameters?.RowStyles == null ) {
-        return;
-      }
-
       int selectedIndex = GetSelectedRow();
       if( selectedIndex < 0 ) {
         return;
@@ -576,19 +560,11 @@ namespace MagistralDevice
       
       RemoveRowControls(selectedIndex);
       // ReSharper disable once PossibleNullReferenceException
-      for( int index = selectedIndex + 1; index < tlpParameters.RowCount - 1; ++index ) {
+      for( int index = selectedIndex + 1; index <= _data.Parameters.Count; ++index ) {
         ShiftRowControlsUp(index);
       }
 
-      tlpParameters.RowCount--;
-
-      RowStyle style = tlpParameters.RowStyles[tlpParameters.RowCount - 1];
-      if( style == null ) {
-        return;
-      }
-
-      style.SizeType = SizeType.Percent;
-      style.Height = 100;
+      _data.Parameters.ParameterItem.RemoveAt(selectedIndex - 1);
     }
 
     private void cbType_SelectedIndexChanged(object sender, EventArgs e) {
