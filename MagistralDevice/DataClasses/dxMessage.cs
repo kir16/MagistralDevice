@@ -16,6 +16,7 @@ using System.Xml.Serialization;
 namespace MagistralDevice.DataClasses
 {
   [XmlRoot(ElementName = "Message")]
+
   // ReSharper disable once InconsistentNaming
   public sealed class dxMessage
   {
@@ -51,22 +52,25 @@ namespace MagistralDevice.DataClasses
           _serializer.UnknownNode += delegate(object sender, XmlNodeEventArgs e) {
                                        Debug.WriteLine("[Unknown Node] Ln {0} Col {1} Object: {2} LocalName {3}, NodeName: {4}", e.LineNumber, e.LinePosition, e.ObjectBeingDeserialized.GetType().FullName, e.LocalName, e.Name);
                                      };
+
           _serializer.UnknownElement += delegate(object sender, XmlElementEventArgs e) {
-                                          Debug.WriteLine("[Unknown Element  ] Ln {0} Col {1} Object : {2} ExpectedElements {3}, Element : {4}",
-                                                          e.LineNumber,
-                                                          e.LinePosition,
-                                                          e.ObjectBeingDeserialized.GetType().FullName,
-                                                          e.ExpectedElements,
-                                                          e.Element.InnerXml);
+                                          Debug.WriteLine("[Unknown Element  ] Ln {0} Col {1} Object : {2} ExpectedElements {3}, Element : {4}"
+                                                        , e.LineNumber
+                                                        , e.LinePosition
+                                                        , e.ObjectBeingDeserialized.GetType().FullName
+                                                        , e.ExpectedElements
+                                                        , e.Element.InnerXml);
                                         };
+
           _serializer.UnknownAttribute += delegate(object sender, XmlAttributeEventArgs e) {
-                                            Debug.WriteLine("[Unknown Attribute] Ln {0} Col {1} Object : {2} LocalName {3}, Text : {4}",
-                                                            e.LineNumber,
-                                                            e.LinePosition,
-                                                            e.ObjectBeingDeserialized.GetType().FullName,
-                                                            e.ExpectedAttributes,
-                                                            e.Attr.Name);
+                                            Debug.WriteLine("[Unknown Attribute] Ln {0} Col {1} Object : {2} LocalName {3}, Text : {4}"
+                                                          , e.LineNumber
+                                                          , e.LinePosition
+                                                          , e.ObjectBeingDeserialized.GetType().FullName
+                                                          , e.ExpectedAttributes
+                                                          , e.Attr.Name);
                                           };
+
           // ReSharper restore PossibleNullReferenceException
 
           return _serializer;
@@ -102,6 +106,7 @@ namespace MagistralDevice.DataClasses
         if( fileName == null ) {
           throw new ArgumentNullException(nameof(fileName));
         }
+
         FileInfo xmlFile = new FileInfo(fileName);
         streamWriter = xmlFile.CreateText();
         streamWriter.WriteLine(xmlString);
@@ -121,7 +126,7 @@ namespace MagistralDevice.DataClasses
     /// <returns>true if this Serializer can deserialize the object; otherwise, false</returns>
     public static bool LoadFromFile(string fileName, out dxMessage obj, out Exception exception) {
       exception = null;
-      obj = default(dxMessage);
+      obj = default;
       try {
         obj = LoadFromFile(fileName);
         return true;
@@ -149,6 +154,7 @@ namespace MagistralDevice.DataClasses
         if( fileName == null ) {
           throw new ArgumentNullException(nameof(fileName));
         }
+
         file = new FileStream(fileName, FileMode.Open, FileAccess.Read);
         sr = new StreamReader(file);
         string xmlString = sr.ReadToEnd();
@@ -169,7 +175,7 @@ namespace MagistralDevice.DataClasses
     ///   Create a clone of this dxMessage object
     /// </summary>
     public dxMessage Clone() {
-      return(dxMessage)MemberwiseClone();
+      return (dxMessage)MemberwiseClone();
     }
 
     #endregion
@@ -187,9 +193,12 @@ namespace MagistralDevice.DataClasses
         memoryStream = new MemoryStream();
         XmlWriterSettings xmlWriterSettings = new XmlWriterSettings
                                               {
-                                                  Indent = true,
-                                                  IndentChars = "  "
+                                                Indent = false
+                                              , CloseOutput = true
+                                              , NewLineChars = " "
+                                              , NewLineHandling = NewLineHandling.Entitize
                                               };
+
         XmlWriter xmlWriter = XmlWriter.Create(memoryStream, xmlWriterSettings);
         Serializer?.Serialize(xmlWriter, this);
 
@@ -213,7 +222,7 @@ namespace MagistralDevice.DataClasses
     /// <returns>true if this Serializer can deserialize the object; otherwise, false</returns>
     public static bool Deserialize(string input, out dxMessage obj, out Exception exception) {
       exception = null;
-      obj = default(dxMessage);
+      obj = default;
       try {
         obj = Deserialize(input);
         return true;
@@ -240,9 +249,10 @@ namespace MagistralDevice.DataClasses
         if( string.IsNullOrEmpty(input) ) {
           return null;
         }
+
         stringReader = new StringReader(input);
         if( Serializer != null ) {
-          return(dxMessage)Serializer.Deserialize(XmlReader.Create(stringReader));
+          return (dxMessage)Serializer.Deserialize(XmlReader.Create(stringReader));
         }
 
         return new dxMessage();
@@ -260,8 +270,8 @@ namespace MagistralDevice.DataClasses
       if( s == null ) {
         throw new ArgumentNullException(nameof(s));
       }
-      return(dxMessage)Serializer.Deserialize(s);
 
+      return (dxMessage)Serializer.Deserialize(s);
     }
 
     #endregion

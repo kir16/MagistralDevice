@@ -4,7 +4,6 @@
 //  </auto-generated>
 // ------------------------------------------------------------------------------
 
-
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 // ReSharper disable UnusedMember.Global
@@ -31,6 +30,32 @@ namespace MagistralDevice.DataClasses
     private static XmlSerializer s_serializer;
 
     #endregion
+
+    public dxParameter() {
+      Access = AccessLevel.Sys;
+      Type = ParameterType.Bool;
+      Name = "";
+      IntValue = 0;
+      BoolValue = false;
+      Id = Guid.NewGuid().ToString();
+    }
+
+    public dxParameter(dxParameter parameter) {
+      if( parameter == null ) {
+        throw new ArgumentNullException(nameof(parameter));
+      }
+
+      Id = parameter.Id;
+      Access = parameter.Access;
+      Type = parameter.Type;
+      Name = parameter.Name;
+      IntValue = parameter.IntValue;
+      BoolValue = parameter.BoolValue;
+      StringValue = parameter.StringValue;
+      MinInt = parameter.MinInt;
+      MaxInt = parameter.MaxInt;
+      StringLength = parameter.StringLength;
+    }
 
     public AccessLevel Access
     {
@@ -233,22 +258,13 @@ namespace MagistralDevice.DataClasses
       }
     }
 
-    public dxParameter() {
-      Access = AccessLevel.Sys;
-      Type = ParameterType.Bool;
-      Name = "";
-      IntValue = 0;
-      BoolValue = false;
-      Id = Guid.NewGuid().ToString();
-    }
-
     #region Clone method
 
     /// <summary>
     ///   Create a clone of this dxParameter object
     /// </summary>
     public dxParameter Clone() {
-      return(dxParameter)MemberwiseClone();
+      return (dxParameter)MemberwiseClone();
     }
 
     #endregion
@@ -268,8 +284,10 @@ namespace MagistralDevice.DataClasses
 
         XmlWriterSettings xmlWriterSettings = new XmlWriterSettings
                                               {
-                                                  Indent = true
-                                                , IndentChars = "  "
+                                                Indent = false
+                                              , CloseOutput = true
+                                              , NewLineChars = " "
+                                              , NewLineHandling = NewLineHandling.Entitize
                                               };
 
         XmlWriter xmlWriter = XmlWriter.Create(memoryStream, xmlWriterSettings);
@@ -331,7 +349,7 @@ namespace MagistralDevice.DataClasses
         stringReader = new StringReader(input);
 
         if( Serializer != null ) {
-          return(dxParameter)Serializer.Deserialize(XmlReader.Create(stringReader));
+          return (dxParameter)Serializer.Deserialize(XmlReader.Create(stringReader));
         }
 
         return new dxParameter();
@@ -350,8 +368,7 @@ namespace MagistralDevice.DataClasses
         throw new ArgumentNullException(nameof(s));
       }
 
-      return(dxParameter)Serializer.Deserialize(s);
-
+      return (dxParameter)Serializer.Deserialize(s);
     }
 
     #endregion

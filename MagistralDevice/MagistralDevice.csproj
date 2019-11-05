@@ -85,6 +85,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include=".editorconfig" />
     <None Include="DataClasses\DeviceDataFormat.xsd">
       <SubType>Designer</SubType>
     </None>

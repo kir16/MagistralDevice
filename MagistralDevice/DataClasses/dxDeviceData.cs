@@ -215,7 +215,7 @@ namespace MagistralDevice.DataClasses
     ///   Create a clone of this dxDeviceData object
     /// </summary>
     public dxDeviceData Clone() {
-      return(dxDeviceData)MemberwiseClone();
+      return (dxDeviceData)MemberwiseClone();
     }
 
     #endregion
@@ -243,8 +243,10 @@ namespace MagistralDevice.DataClasses
 
         XmlWriterSettings xmlWriterSettings = new XmlWriterSettings
                                               {
-                                                Indent = true
-                                              , IndentChars = "  "
+                                                Indent = false
+                                              , CloseOutput = true
+                                              , NewLineChars = " "
+                                              , NewLineHandling = NewLineHandling.Entitize
                                               };
 
         XmlWriter xmlWriter = XmlWriter.Create(memoryStream, xmlWriterSettings);
@@ -316,7 +318,7 @@ namespace MagistralDevice.DataClasses
       }
 
       try {
-        return(dxDeviceData)Serializer.Deserialize(s);
+        return (dxDeviceData)Serializer.Deserialize(s);
       }
       catch( Exception ) {
         return null;

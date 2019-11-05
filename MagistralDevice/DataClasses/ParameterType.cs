@@ -3,9 +3,9 @@
   #pragma warning disable
   public enum ParameterType
   {
-    Bool,
-    Int,
-    String
+    Bool
+  , Int
+  , String
   }
   #pragma warning restore
 }

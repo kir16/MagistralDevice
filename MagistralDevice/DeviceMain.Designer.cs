@@ -334,14 +334,16 @@
       // 
       // tbMessageLog
       // 
+      this.tbMessageLog.AcceptsReturn = true;
       this.tbMessageLog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.tbMessageLog.BackColor = System.Drawing.SystemColors.Window;
-      this.tbMessageLog.Location = new System.Drawing.Point(12, 417);
+      this.tbMessageLog.Location = new System.Drawing.Point(12, 416);
       this.tbMessageLog.Multiline = true;
       this.tbMessageLog.Name = "tbMessageLog";
       this.tbMessageLog.ReadOnly = true;
-      this.tbMessageLog.Size = new System.Drawing.Size(731, 131);
+      this.tbMessageLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+      this.tbMessageLog.Size = new System.Drawing.Size(731, 132);
       this.tbMessageLog.TabIndex = 11;
       // 
       // DeviceMain
@@ -384,6 +386,7 @@
     private System.Windows.Forms.TextBox tbVersion;
     private System.Windows.Forms.GroupBox gbAttributes;
     private System.Windows.Forms.GroupBox gbParameters;
+    private System.Windows.Forms.TextBox tbMessageLog;
     private System.Windows.Forms.StatusStrip statusDeviceState;
     private System.Windows.Forms.ToolStripStatusLabel tsslDeviceState;
     private System.Windows.Forms.SaveFileDialog sfdParameters;
@@ -393,7 +396,6 @@
     private System.Windows.Forms.ToolStripButton tsbSaveConfig;
     private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     private System.Windows.Forms.ToolStripButton tsbStartStopEmulation;
-    private System.Windows.Forms.TextBox tbMessageLog;
     private System.Windows.Forms.ToolStrip tsParametersCommands;
     private System.Windows.Forms.ToolStripButton tsbAddParameter;
     private System.Windows.Forms.ToolStripButton tsbRemoveParameter;

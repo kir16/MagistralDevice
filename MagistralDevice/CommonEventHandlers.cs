@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 
 using MagistralDevice.DataClasses;
@@ -14,8 +13,7 @@ namespace MagistralDevice
         return;
       }
 
-
-      if(e != null  && !string.IsNullOrEmpty(nameBox.Text) && !int.TryParse(nameBox.Text,out int dummy)) {
+      if( e != null && !string.IsNullOrEmpty(nameBox.Text) && !int.TryParse(nameBox.Text, out int dummy) ) {
         e.KeyChar = (char)0;
       }
     }
@@ -104,6 +102,7 @@ namespace MagistralDevice
       if( Settings.Default == null ) {
         return;
       }
+
       if( !(sender is ComboBox accessBox) ) {
         return;
       }

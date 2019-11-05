@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using InTheHand.Net.Bluetooth;
-using InTheHand.Net.Sockets;
 
 using MagistralDevice.DataClasses;
 using MagistralDevice.Properties;
@@ -31,7 +30,7 @@ namespace MagistralDevice
 
     private dxDeviceData _data;
 
-    private BluetoothListener _radioListener;
+    private CancellationTokenSource _serverCancellation;
 
     private readonly object[] _interactionControls;
 
@@ -90,7 +89,7 @@ namespace MagistralDevice
         tlpParameters.RowStyles[tlpParameters.RowStyles.Count - 1].Height = 100;
       }
     }
-
+    /*
     private void UpdateValuesControls() {
       if( _data?.Parameters?.ParameterItem == null ) {
         return;
@@ -100,6 +99,7 @@ namespace MagistralDevice
         UpdateRowControls(tlpParameters, index + 1, _data.Parameters[index]);
       }
     }
+    */
 
     private void UpdateData() {
       if( _data?.Attributes == null ) {
@@ -216,29 +216,75 @@ namespace MagistralDevice
         Control theControl = tlpParameters.GetControlFromPosition(columnIndex, row);
 
         if( theControl != null ) {
-          tlpParameters.SetRow(theControl, row -1);
+          tlpParameters.SetRow(theControl, row - 1);
         }
       }
     }
 
-    private bool StartListening() {
-      BluetoothRadio mainRadio = BluetoothRadio.PrimaryRadio;
-
-      if( mainRadio == null ) {
-        return false;
+    private async void StartListening() {
+      if( _serverCancellation != null || tsbStartStopEmulation == null ) {
+        return;
       }
 
-      if( mainRadio.Mode != RadioMode.Discoverable ) {
-        mainRadio.Mode = RadioMode.Discoverable;
+      if( string.IsNullOrEmpty(tbName?.Text) ) {
+        UpdateMessages(@"Не указано имя устройства");
+        MessageBox.Show(@"Укажите имя устройства", Resources.Magistral_Device_Title, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+        ActiveControl = tbName;
+        return;
       }
 
-      _radioListener = new BluetoothListener(Marshal.GetTypeLibGuidForAssembly(Assembly.GetExecutingAssembly()));
+      try {
+        BluetoothRadio mainRadio = BluetoothRadio.PrimaryRadio;
 
-      return true;
-    }
+        if( mainRadio == null ) {
+          UpdateMessages(@"Не найдено оборудование Bluetooth");
+          MessageBox.Show(@"Не найдено оборудование Bluetooth", Resources.Magistral_Device_Title, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+          return;
+        }
 
-    private void StopListening() {
-      _radioListener = null;
+        if( mainRadio.Mode != RadioMode.Discoverable ) {
+          mainRadio.Mode = RadioMode.Discoverable;
+        }
+
+        if( tbMessageLog != null ) {
+          tbMessageLog.Text = "";
+        }
+
+        Communicator server = new Communicator(this);
+        _serverCancellation = new CancellationTokenSource();
+        Task serverTask = server.StartAsync(_serverCancellation.Token);
+        if( serverTask == null ) {
+          return;
+        }
+
+        tsbStartStopEmulation.Text = Resources.btStartStop_TextWhenWork;
+        tsbStartStopEmulation.Image = Resources.Conn_Del;
+        EnableControls(false);
+
+        try {
+          await serverTask.ConfigureAwait(true);
+        }
+        catch( Exception ex ) {
+          UpdateMessages(ex.Message);
+        }
+
+        // ReSharper disable once PossibleNullReferenceException
+        tsbStartStopEmulation.Text = Resources.btStartStop_TextWhenIdle;
+        tsbStartStopEmulation.Image = Resources.Conn_Add;
+        EnableControls(true);
+
+        if( !serverTask.IsFaulted || serverTask.Exception == null ) {
+          return;
+        }
+
+        string errorText = serverTask.Exception.ToString();
+        MessageBox.Show(errorText, Resources.Magistral_Device_Title, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+        UpdateMessages(errorText);
+      }
+      catch( Exception e ) {
+        UpdateMessages(e.ToString());
+        MessageBox.Show(e.ToString(), Resources.Magistral_Device_Title, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+      }
     }
 
     private void NewNameTextBox(int row, dxParameter parameter) {
@@ -248,7 +294,7 @@ namespace MagistralDevice
 
       TextBox textBox = new TextBox
                         {
-                         Dock = DockStyle.Fill
+                          Dock = DockStyle.Fill
                         , Margin = new Padding(1)
                         , Text = parameter.Name
                         };
@@ -266,11 +312,12 @@ namespace MagistralDevice
       Control valueControl;
       if( parameter.Type == ParameterType.Bool ) {
         valueControl = new CheckBox
-                            {
-                              Dock = DockStyle.Top
-                            , Margin = new Padding(1)
-                            , Checked = parameter.BoolValue
-                            };
+                       {
+                         Dock = DockStyle.Top
+                       , Margin = new Padding(1)
+                       , Checked = parameter.BoolValue
+                       };
+
         ((CheckBox)valueControl).Click += CommonEventHandlers.chbValue_Click;
       }
       else {
@@ -345,29 +392,52 @@ namespace MagistralDevice
       NewValueControl(row, parameter);
     }
 
-    private static void UpdateRowControls(TableLayoutPanel panel, int row, dxParameter parameter) {
-      if( Settings.Default == null || panel == null || parameter == null || row < 1 || row > panel.RowCount - 2 ) {
+    private void UpdateRowControls(int row, dxParameter parameter) {
+      if( Settings.Default == null || tlpParameters == null || parameter == null ) {
         return;
       }
 
-      if( panel.GetControlFromPosition(Settings.Default.AccessColumn, row) is ComboBox accessComboBox ) {
+      if( tlpParameters.GetControlFromPosition(Settings.Default.AccessColumn, row) is ComboBox accessComboBox ) {
         accessComboBox.SelectedIndex = parameter.Access == AccessLevel.Sys ? 0 : 1;
       }
 
-      if( panel.GetControlFromPosition(Settings.Default.TypeColumn, row) is ComboBox typeComboBox ) {
+      if( tlpParameters.GetControlFromPosition(Settings.Default.TypeColumn, row) is ComboBox typeComboBox ) {
         typeComboBox.SelectedIndex = parameter.Type == ParameterType.Bool ? 0 : 1;
       }
 
-      if( panel.GetControlFromPosition(Settings.Default.NameColumn, row) is TextBox nameTextBox ) {
+      if( tlpParameters.GetControlFromPosition(Settings.Default.NameColumn, row) is TextBox nameTextBox ) {
         nameTextBox.Text = parameter.Name;
       }
 
       switch( parameter.Type ) {
-        case ParameterType.Bool when panel.GetControlFromPosition(Settings.Default.ValueColumn, row) is CheckBox valueCheckBox:
+        case ParameterType.Bool when tlpParameters.GetControlFromPosition(Settings.Default.ValueColumn, row) is CheckBox valueCheckBox:
           valueCheckBox.Checked = parameter.BoolValue;
           break;
-        case ParameterType.Int when panel.GetControlFromPosition(Settings.Default.ValueColumn, row) is TextBox valueTextBox:
+        case ParameterType.Int when tlpParameters.GetControlFromPosition(Settings.Default.ValueColumn, row) is TextBox valueTextBox:
           valueTextBox.Text = $@"{parameter.IntValue:D1}";
+          break;
+        case ParameterType.String when tlpParameters.GetControlFromPosition(Settings.Default.ValueColumn, row) is TextBox valueTextBox:
+          valueTextBox.Text = parameter.StringValue ?? "";
+          break;
+        default:
+          throw new ArgumentOutOfRangeException();
+      }
+    }
+
+    private void UpdateRowValue(int row, dxParameter parameter) {
+      if( tlpParameters == null || parameter == null || Settings.Default == null ) {
+        return;
+      }
+
+      switch( parameter.Type ) {
+        case ParameterType.Bool when tlpParameters.GetControlFromPosition(Settings.Default.ValueColumn, row) is CheckBox valueCheckBox:
+          valueCheckBox.Checked = parameter.BoolValue;
+          break;
+        case ParameterType.Int when tlpParameters.GetControlFromPosition(Settings.Default.ValueColumn, row) is TextBox valueTextBox:
+          valueTextBox.Text = $@"{parameter.IntValue:D1}";
+          break;
+        case ParameterType.String when tlpParameters.GetControlFromPosition(Settings.Default.ValueColumn, row) is TextBox valueTextBox:
+          valueTextBox.Text = parameter.StringValue ?? "";
           break;
         default:
           throw new ArgumentOutOfRangeException();
@@ -436,13 +506,15 @@ namespace MagistralDevice
 
       Icon = Resources.Reaktor;
 
-      _data = dxDeviceData.Deserialize(Settings.Default?.DeviceData);
+      if( !string.IsNullOrEmpty(Settings.Default?.DeviceData) ) {
+        _data = dxDeviceData.Deserialize(Settings.Default?.DeviceData);
+      }
 
       if( _data?.Parameters?.ParameterItem == null ) {
         _data = new dxDeviceData();
       }
 
-      if( tlpParameters?.RowStyles != null ) {
+      if( tlpParameters != null ) {
         tlpParameters.Tag = _data;
       }
 
@@ -451,6 +523,8 @@ namespace MagistralDevice
     }
 
     private void DeviceMain_FormClosing(object sender, FormClosingEventArgs e) {
+      _serverCancellation?.Cancel(false);
+
       if( Settings.Default == null ) {
         return;
       }
@@ -488,23 +562,13 @@ namespace MagistralDevice
     }
 
     private void tsbStartStopEmulation_Click(object sender, EventArgs e) {
-      if( _radioListener == null ) {
+      if( _serverCancellation == null ) {
         UpdateData();
-
-        if( !StartListening() ) {
-          return;
-        }
-
-        // ReSharper disable once PossibleNullReferenceException
-        tsbStartStopEmulation.Text = Resources.btStartStop_TextWhenWork;
-        EnableControls(false);
+        StartListening();
       }
       else {
-        StopListening();
-
-        // ReSharper disable once PossibleNullReferenceException
-        tsbStartStopEmulation.Text = Resources.btStartStop_TextWhenIdle;
-        EnableControls(true);
+        _serverCancellation?.Cancel(false);
+        _serverCancellation = null;
       }
     }
 
@@ -537,6 +601,7 @@ namespace MagistralDevice
 
       _data = dxDeviceData.LoadFromFile(ofdParameters.FileName);
       UpdateControls();
+
       // ReSharper disable once PossibleNullReferenceException
       tlpParameters.Controls.Clear();
       CreateValuesControls();
@@ -557,8 +622,9 @@ namespace MagistralDevice
       if( selectedIndex < 0 ) {
         return;
       }
-      
+
       RemoveRowControls(selectedIndex);
+
       // ReSharper disable once PossibleNullReferenceException
       for( int index = selectedIndex + 1; index <= _data.Parameters.Count; ++index ) {
         ShiftRowControlsUp(index);
@@ -577,6 +643,7 @@ namespace MagistralDevice
       if( valueControl != null ) {
         tlpParameters.Controls.Remove(valueControl);
       }
+
       dxParameter parameter = _data.Parameters[row - 1];
       if( parameter != null && typeCombo.Text == Settings.Default.BoolType ) {
         parameter.Type = ParameterType.Bool;
@@ -584,9 +651,69 @@ namespace MagistralDevice
       else if( parameter != null && typeCombo.Text == Settings.Default.IntType ) {
         parameter.Type = ParameterType.Int;
       }
+
       NewValueControl(row, parameter);
     }
 
     #endregion Event handlers
+
+    #region Public properties
+
+    public string ServiceName
+    {
+      get
+      {
+        return _data?.Attributes?.Name ?? "";
+      }
+    }
+
+    // ReSharper disable once UnusedMember.Global
+    // ReSharper disable once ConvertToAutoPropertyWithPrivateSetter
+    public dxDeviceData Data
+    {
+      get
+      {
+        return _data;
+      }
+    }
+
+    #endregion Public properties
+
+    #region Public methods
+
+    [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
+    public void UpdateMessages(string message) {
+      void SetMessage() { tbMessageLog.Text = tbMessageLog.Text + message + Environment.NewLine + Environment.NewLine; }
+
+      if( InvokeRequired ) {
+        tbMessageLog.Invoke((Action)SetMessage);
+      }
+      else {
+        SetMessage();
+      }
+    }
+
+    public void UpdateParameterValue(int index, dxParameter parameter) {
+      void SetValue() {
+        if( _data?.Parameters == null || index < 0 || index >= _data.Parameters.Count || parameter == null ) {
+          return;
+        }
+
+        UpdateRowValue(index + 1, parameter);
+      }
+
+      if( tlpParameters == null ) {
+        return;
+      }
+
+      if( InvokeRequired ) {
+        Invoke((Action)SetValue);
+      }
+      else {
+        SetValue();
+      }
+    }
+
+    #endregion Public methods
   }
 }
